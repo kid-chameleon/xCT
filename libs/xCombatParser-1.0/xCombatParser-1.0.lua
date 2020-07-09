@@ -157,7 +157,7 @@ end
 -- Handle the Events
 do
 	-- Upvalues (Only values that will be used more than once)
-	local select,sub,tostring,playerGUID=select,string.sub,tostring
+	local print,select,sub,tostring,playerGUID=print,select,string.sub,tostring
 
 	-- Recycle or create out event frame
 	private.frame=oldLib and oldLib.private.frame or CreateFrame"frame"
@@ -235,6 +235,7 @@ do
 				args.recapID, args.unconsciousOnDeath = tempTable[startIndex], tempTable[startIndex+1]
 
 			elseif event == "PARTY_KILL" then -- do nothing
+			elseif event == "UNIT_LOYALTY" then
 			else
 				prefix = sub(event, 1, 14)
 				if prefix == "SPELL_PERIODIC" or prefix == "SPELL_BUILDING" then
@@ -285,8 +286,6 @@ do
 				args.isOffHand = tempTable[startIndex+i], tempTable[startIndex+i+1], tempTable[startIndex+i+2],
 				tempTable[startIndex+i+3], tempTable[startIndex+i+4], tempTable[startIndex+i+5], tempTable[startIndex+i+6],
 				tempTable[startIndex+i+7], tempTable[startIndex+i+8], tempTable[startIndex+i+9]
-				
-				
 
 			--[[ This is for the combat log only
 			elseif suffix == "_DAMAGE_LANDED" then
@@ -391,20 +390,20 @@ do
 			args.IsDestinationRaidMember  = private.IsDestinationRaidMember
 			args.IsSourcePartyMember      = private.IsSourcePartyMember
 			args.IsDestinationPartyMember = private.IsDestinationPartyMember
-			
+
 			-- Call all the registered handlers
 			args:pin()
 			for func in pairs(private.handles) do
 				func(args)
 			end
 			args:free() -- If no one else pinned this table, it should be cleaned up now
-			
+
 
 		else
 			self:UnregisterEvent"PLAYER_ENTERING_WORLD"
 			playerGUID=UnitGUID"player"
 		end
-		
+
 	end)
 end
 

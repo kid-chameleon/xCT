@@ -195,23 +195,23 @@ x.cvar_update = function( force )
     SetCVar("floatingCombatTextCombatDamageAllAutos", 0)
   end
 
-  if x.db.profile.blizzardFCT.floatingCombatTextCombatHealing then
-    SetCVar("floatingCombatTextCombatHealing", 1)
-  else
-    SetCVar("floatingCombatTextCombatHealing", 0)
-  end
+  --if x.db.profile.blizzardFCT.floatingCombatTextCombatHealing then
+  --  SetCVar("floatingCombatTextCombatHealing", 1)
+  --else
+  --  SetCVar("floatingCombatTextCombatHealing", 0)
+  --end
 
-  if x.db.profile.blizzardFCT.floatingCombatTextCombatHealingAbsorbSelf then
-    SetCVar("floatingCombatTextCombatHealingAbsorbSelf", 1)
-  else
-    SetCVar("floatingCombatTextCombatHealingAbsorbSelf", 0)
-  end
+  --if x.db.profile.blizzardFCT.floatingCombatTextCombatHealingAbsorbSelf then
+  --  SetCVar("floatingCombatTextCombatHealingAbsorbSelf", 1)
+  --else
+  --  SetCVar("floatingCombatTextCombatHealingAbsorbSelf", 0)
+  --end
 
-  if x.db.profile.blizzardFCT.floatingCombatTextCombatHealingAbsorbTarget then
-    SetCVar("floatingCombatTextCombatHealingAbsorbTarget", 1)
-  else
-    SetCVar("floatingCombatTextCombatHealingAbsorbTarget", 0)
-  end
+  --if x.db.profile.blizzardFCT.floatingCombatTextCombatHealingAbsorbTarget then
+  --  SetCVar("floatingCombatTextCombatHealingAbsorbTarget", 1)
+  --else
+  --  SetCVar("floatingCombatTextCombatHealingAbsorbTarget", 0)
+  --end
 
   if x.db.profile.blizzardFCT.floatingCombatTextCombatLogPeriodicSpells then
     SetCVar("floatingCombatTextCombatLogPeriodicSpells", 1)

@@ -23,100 +23,100 @@ local spell, class, spec, alias = unpack(addon.merge_helpers)
 
 class 'DEATHKNIGHT'
 do
-	spec  '0' -- All Specs
-	spell '52212' '2.5' --  Death and Decay
+--	spec  '0' -- All Specs
+--	spell '52212' '2.5' --  Death and Decay
 
-	spec  '250' -- Blood
-	spell '55078'  '3.5' --  Blood Plague
-	spell '50842'  '0.5' --  Blood Boil
-	spell '195292' '0.5' --  Death's Caress (DRW)
-	spell '49998'  '0.5' --  Death Strike (DRW)
-	spell '206930' '0.5' --  Heart Strike
-	spell '212744' '0.5' --  Talent: Soulgorge
-	spell '196528' '1.5' --  Talent: Bonestorm (DMG)
-	spell '196545' '1.5' --  Talent: Bonestorm (Heal)
-	spell '205223' '0.5' --  Artifact: Consumption (DMG)
-	spell '205224' '0.5' --  Artifact: Consumption (Heal)
-	spell '203166' '2.5' --  PVP Talent: Blight (ID: 203172)
-	spell '203174' '0.5' --  PVP Talent: Death Chain (ID: 203173)
+--	spec  '250' -- Blood
+--	spell '55078'  '3.5' --  Blood Plague
+--	spell '50842'  '0.5' --  Blood Boil
+--	spell '195292' '0.5' --  Death's Caress (DRW)
+--	spell '49998'  '0.5' --  Death Strike (DRW)
+--	spell '206930' '0.5' --  Heart Strike
+--	spell '212744' '0.5' --  Talent: Soulgorge
+--	spell '196528' '1.5' --  Talent: Bonestorm (DMG)
+--	spell '196545' '1.5' --  Talent: Bonestorm (Heal)
+--	spell '205223' '0.5' --  Artifact: Consumption (DMG)
+--	spell '205224' '0.5' --  Artifact: Consumption (Heal)
+--	spell '203166' '2.5' --  PVP Talent: Blight (ID: 203172)
+--	spell '203174' '0.5' --  PVP Talent: Death Chain (ID: 203173)
 
-	spec  '251' -- Frost
-	spell '196771' '2.5' --  Remorseless Winter
-	spell '55095'  '3.5' --  Frost Fever
-	spell '49184'  '0.5' --  Howling Blast
-	spell '222024' '3.0' --  Obliterate (For Merge)
-	spell '222026' '3.0' --  Frost Strike (For Merge)
-	spell '207194' '0.5' --  Talent: Volatile Shielding
-	spell '195750' '0.5' --  Talent: Frozen Pulse
-	spell '207150' '0.5' --  Talent: Avalanche
-	spell '207230' '0.5' --  Talent: Frostscythe
-	spell '195975' '0.5' --  Talent: Glacial Advance
-	spell '155166' '2.5' --  Talent: Breath of Sindragosa
-	spell '190780' '1.5' --  Artifact: Sindragosa's Fury
-	spell '204959' '0.5' --  Artifact: Frozen Soul
-	alias '66198'  '222024' --  [MH/OH Merger] Obliterate
-	alias '66196'  '222026' --  [MH/OH Merger] Frost Strike
+--	spec  '251' -- Frost
+--	spell '196771' '2.5' --  Remorseless Winter
+--	spell '55095'  '3.5' --  Frost Fever
+--	spell '49184'  '0.5' --  Howling Blast
+--	spell '222024' '3.0' --  Obliterate (For Merge)
+--	spell '222026' '3.0' --  Frost Strike (For Merge)
+--	spell '207194' '0.5' --  Talent: Volatile Shielding
+--	spell '195750' '0.5' --  Talent: Frozen Pulse
+--	spell '207150' '0.5' --  Talent: Avalanche
+--	spell '207230' '0.5' --  Talent: Frostscythe
+--	spell '195975' '0.5' --  Talent: Glacial Advance
+--	spell '155166' '2.5' --  Talent: Breath of Sindragosa
+--	spell '190780' '1.5' --  Artifact: Sindragosa's Fury
+--	spell '204959' '0.5' --  Artifact: Frozen Soul
+--	alias '66198'  '222024' --  [MH/OH Merger] Obliterate
+--	alias '66196'  '222026' --  [MH/OH Merger] Frost Strike
 
-	spec  '252' -- Unholy
-	spell '215969' '0.5' --  Virulent Plague (DoT)
-	spell '70890'  '3.0' --  Scourge Strike
-	spell '194311' '0.5' --  Festering Wound
-	spell '91778'  '0.5' --  Pet: Sweeping Claws
-	spell '199373' '2.5' --  Army: Claw
-	spell '191587' '2.5' --  Virulent Plague (DoT)
-	spell '218321' '1.5' --  Artifact: Dragged to Helheim
-	spell '191758' '0.5' --  Artifact: Corpse Explosion
-	spell '207267' '0.5' --  Talent: Dragged to Helheim
-	spell '212338' '0.5' --  Talent: Sludge Belcher
-	spell '212739' '0.5' --  Talent: Epidemic
-	spell '156000' '2.5' --  Talent: Defile
-	alias '55090'  '70890'  --  [Cleave Merger] Scourge Strike
-	alias '191685' '215969' --  [DD/DoT Merger] Virulent Plague Eruption
-	alias '212969' '212739' --  [DD/DoT Merger] Talent: Epidemic
+--	spec  '252' -- Unholy
+--	spell '215969' '0.5' --  Virulent Plague (DoT)
+--	spell '70890'  '3.0' --  Scourge Strike
+--	spell '194311' '0.5' --  Festering Wound
+--	spell '91778'  '0.5' --  Pet: Sweeping Claws
+--	spell '199373' '2.5' --  Army: Claw
+--	spell '191587' '2.5' --  Virulent Plague (DoT)
+--	spell '218321' '1.5' --  Artifact: Dragged to Helheim
+--	spell '191758' '0.5' --  Artifact: Corpse Explosion
+--	spell '207267' '0.5' --  Talent: Dragged to Helheim
+--	spell '212338' '0.5' --  Talent: Sludge Belcher
+--	spell '212739' '0.5' --  Talent: Epidemic
+--	spell '156000' '2.5' --  Talent: Defile
+--	alias '55090'  '70890'  --  [Cleave Merger] Scourge Strike
+--	alias '191685' '215969' --  [DD/DoT Merger] Virulent Plague Eruption
+--	alias '212969' '212739' --  [DD/DoT Merger] Talent: Epidemic
 end
 
 
-class 'DEMONHUNTER'
-do
-	spec  '577' -- Havoc
-	spell '222031' '3.0' --  Chaos Strike (server side delay?)
-	spell '185123' '1.5' --  Throw Glaive (Havoc)
-	spell '198030' '1.5' --  Eye Beam
-	spell '192611' '1.5' --  Fel Rush
-	spell '185123' '1.5' --  Throw Glaive
-	spell '199552' '2.0' --  Blade Dance
-	spell '200166' '0.5' --  Metamorphosis (Landing)
-	spell '198813' '0.5' --  Vengeful Retreat
-	spell '179057' '0.5' --  Chaos Nova
-	spell '203796' '2.5' --  Talent: Demon Blades
-	spell '211052' '1.5' --  Talent: Fel Barrage
-	spell '202388' '0.5' --  Artifact: Inner Demons
-	spell '201628' '1.5' --  Artifact: Fury of the Illidari
-	spell '217070' '0.5' --  Artifact: Rage of the Illidari
-	spell '202446' '0.5' --  Artifact: Anguish
-	alias '199547' '222031' --  [MH/OH Merger] Chaos Strike
-	alias '200685' '199552' --  [MH/OH Merger] Blade Dance
-	alias '201789' '201628' --  [MH/OH Merger] Fury of the Illidari
+--class 'DEMONHUNTER'
+--do
+--	spec  '577' -- Havoc
+--	spell '222031' '3.0' --  Chaos Strike (server side delay?)
+--	spell '185123' '1.5' --  Throw Glaive (Havoc)
+--	spell '198030' '1.5' --  Eye Beam
+--	spell '192611' '1.5' --  Fel Rush
+--	spell '185123' '1.5' --  Throw Glaive
+--	spell '199552' '2.0' --  Blade Dance
+--	spell '200166' '0.5' --  Metamorphosis (Landing)
+--	spell '198813' '0.5' --  Vengeful Retreat
+--	spell '179057' '0.5' --  Chaos Nova
+--	spell '203796' '2.5' --  Talent: Demon Blades
+--	spell '211052' '1.5' --  Talent: Fel Barrage
+--	spell '202388' '0.5' --  Artifact: Inner Demons
+--	spell '201628' '1.5' --  Artifact: Fury of the Illidari
+--	spell '217070' '0.5' --  Artifact: Rage of the Illidari
+--	spell '202446' '0.5' --  Artifact: Anguish
+--	alias '199547' '222031' --  [MH/OH Merger] Chaos Strike
+--	alias '200685' '199552' --  [MH/OH Merger] Blade Dance
+--	alias '201789' '201628' --  [MH/OH Merger] Fury of the Illidari
 
-	spec  '581' -- Vengeance
-	spell '204157' '1.5' --  Throw Glaive (Vengeance)
-	spell '187727' '2.5' --  Immolation Aura
-	spell '204598' '2.5' --  Sigil of Flame
-	spell '189112' '0.5' --  Infernal Strike
-	spell '222030' '0.5' --  Soul Cleave
-	spell '203794' '1.5' --  Consume Soul
-	spell '207771' '2.5' --  Talent: Burning Alive
-	spell '227255' '1.5' --  Talent: Fel Devastation
-	spell '218677' '0.5' --  Talent: Spirit Bomb
-	spell '218677' '1.5' --  Talent: Spirit Bomb (Frailty Heal)
-	spell '213011' '2.5' --  Artifact: Charred Warblades
-	spell '207407' '1.5' --  Artifact: Soul Carver (DoT)
-	alias '178741' '187727' --  [DD/DoT Merger] Immolation Aura
-	alias '208038' '222030' --  [DD/DoT Merger] Soul Cleave
-	alias '214743' '207407' --  [DD/DoT Merger] Soul Cleave
-	alias '212106' '227255' --  [MH/OH Merger] Fel Devastation
-	alias '212084' '227255' --  Reported From Curse: Should be Fel Devastation
-end
+--	spec  '581' -- Vengeance
+--	spell '204157' '1.5' --  Throw Glaive (Vengeance)
+--	spell '187727' '2.5' --  Immolation Aura
+--	spell '204598' '2.5' --  Sigil of Flame
+--	spell '189112' '0.5' --  Infernal Strike
+--	spell '222030' '0.5' --  Soul Cleave
+--	spell '203794' '1.5' --  Consume Soul
+--	spell '207771' '2.5' --  Talent: Burning Alive
+--	spell '227255' '1.5' --  Talent: Fel Devastation
+--	spell '218677' '0.5' --  Talent: Spirit Bomb
+--	spell '218677' '1.5' --  Talent: Spirit Bomb (Frailty Heal)
+--	spell '213011' '2.5' --  Artifact: Charred Warblades
+--	spell '207407' '1.5' --  Artifact: Soul Carver (DoT)
+--	alias '178741' '187727' --  [DD/DoT Merger] Immolation Aura
+--	alias '208038' '222030' --  [DD/DoT Merger] Soul Cleave
+--	alias '214743' '207407' --  [DD/DoT Merger] Soul Cleave
+--	alias '212106' '227255' --  [MH/OH Merger] Fel Devastation
+--	alias '212084' '227255' --  Reported From Curse: Should be Fel Devastation
+--end
 
 
 class 'DRUID'
@@ -279,61 +279,61 @@ do
 end
 
 
-class 'MONK'
-do
-	spec  '0' -- All Specs
-	spell '130654' '1.5' --  Chi Burst (Healing)
-	spell '148135' '1.5' --  Chi Burst (Damage)
-	spell '196608' '2.5' --  Talent: Eye of the Tiger
-	spell '132467' '1.5' --  Talent: Chi Wave (Damage)
-	spell '132463' '2.5' --  Talent: Chi Wave (Healing)
-	spell '148187' '1.5' --  Talent: Rushing Jade Wind
-	spell '107270' '1.5' --  Spinning Crane Kick
-	spell '100784' '1.0' --  Blackout Kick
+--class 'MONK'
+--do
+--	spec  '0' -- All Specs
+--	spell '130654' '1.5' --  Chi Burst (Healing)
+--	spell '148135' '1.5' --  Chi Burst (Damage)
+--	spell '196608' '2.5' --  Talent: Eye of the Tiger
+--	spell '132467' '1.5' --  Talent: Chi Wave (Damage)
+--	spell '132463' '2.5' --  Talent: Chi Wave (Healing)
+--	spell '148187' '1.5' --  Talent: Rushing Jade Wind
+--	spell '107270' '1.5' --  Spinning Crane Kick
+--	spell '100784' '1.0' --  Blackout Kick
 
-	spec  '268' -- Brewmaster
-	spell '124255' '1.5' --  DmgTkn: Stagger
-	spell '216521' '1.0' --  Celestial Fortune
-	spell '124507' '0.5' --  Gift of the Ox
-	spell '115181' '0.5' --  Breath of Fire
-	spell '123725' '2.5' --  Breath of Fire (DoT)
-	spell '121253' '0.5' --  Keg Smash
-	spell '130654' '1.5' --  Chi Burst (Healing)
-	spell '130654' '1.5' --  Chi Burst (Damage)
-	spell '227291' '0.5' --  Talent: Niuzao, The Black Ox (Stomp)
-	spell '196733' '0.5' --  Talent: Special Delivery
-	spell '214326' '0.5' --  Artifact: Exploding Keg
-	spell '227681' '1.5' --  Artifact: Dragonfire Brew
-	alias '178173' '124507' --  [Greater Merger] Artifact: Overflow (double check)
+--	spec  '268' -- Brewmaster
+--	spell '124255' '1.5' --  DmgTkn: Stagger
+--	spell '216521' '1.0' --  Celestial Fortune
+--	spell '124507' '0.5' --  Gift of the Ox
+--	spell '115181' '0.5' --  Breath of Fire
+--	spell '123725' '2.5' --  Breath of Fire (DoT)
+--	spell '121253' '0.5' --  Keg Smash
+--	spell '130654' '1.5' --  Chi Burst (Healing)
+--	spell '130654' '1.5' --  Chi Burst (Damage)
+--	spell '227291' '0.5' --  Talent: Niuzao, The Black Ox (Stomp)
+--	spell '196733' '0.5' --  Talent: Special Delivery
+--	spell '214326' '0.5' --  Artifact: Exploding Keg
+--	spell '227681' '1.5' --  Artifact: Dragonfire Brew
+--	alias '178173' '124507' --  [Greater Merger] Artifact: Overflow (double check)
 
-	spec  '269' -- Windwalker
-	spell '117952' '0.5' --  Crackling Jade Lightning (SEF)
-	spell '124280' '2.0' --  Touch of Karma
-	spell '123586' '0.5' --  Flying Serpent Kick
-	spell '117418' '2.0' --  Fists of Fury
-	spell '100780' '0.5' --  Tiger Palm (SEF)
-	spell '185099' '0.5' --  Rising Sun Kick (SEF)
-	spell '196748' '0.5' --  Talent: Chi Orbit
-	spell '158221' '0.5' --  Talent: Whirling Dragon Punch
-	spell '222029' '0.5' --  Artifact: Strike of the Windlord
-	alias '205414' '222029' --  [MH/OH Merger] Artifact: Strike of the Windlord
-	alias '196061' '117418' --  [DMG Merger] Artifact: Crosswinds
+--	spec  '269' -- Windwalker
+--	spell '117952' '0.5' --  Crackling Jade Lightning (SEF)
+--	spell '124280' '2.0' --  Touch of Karma
+--	spell '123586' '0.5' --  Flying Serpent Kick
+--	spell '117418' '2.0' --  Fists of Fury
+--	spell '100780' '0.5' --  Tiger Palm (SEF)
+--	spell '185099' '0.5' --  Rising Sun Kick (SEF)
+--	spell '196748' '0.5' --  Talent: Chi Orbit
+--	spell '158221' '0.5' --  Talent: Whirling Dragon Punch
+--	spell '222029' '0.5' --  Artifact: Strike of the Windlord
+--	alias '205414' '222029' --  [MH/OH Merger] Artifact: Strike of the Windlord
+--	alias '196061' '117418' --  [DMG Merger] Artifact: Crosswinds
 
-	spec  '270' -- Mistweaver
-	spell '115175' '1.5' --  Soothing Mist
-	spell '124682' '1.5' --  Eneloping Mist
-	spell '191840' '1.5' --  Essence Font
-	spell '119611' '2.0' --  Renewing Mists
-	spell '115310' '0.5' --  Revival
-	spell '116670' '0.5' --  Vivify
-	spell '124081' '1.5' --  Talent: Zen Pulse
-	spell '162530' '1.5' --  Talent: Refreshing Jade Wind
-	spell '198756' '2.5' --  Talent: Invoke Chi'Ji
-	spell '199668' '2.0' --  Artifact: Blessing of Yu'lon
-	spell '199656' '2.0' --  Artifact: Celestial Breath
-	alias '198533' '115175' --  [Statue Merger] Talent: Jade Serpent Statue
-	alias '228649' '100784' --  [Passive Merger] Teachings of the Monastery
-end
+--	spec  '270' -- Mistweaver
+--	spell '115175' '1.5' --  Soothing Mist
+--	spell '124682' '1.5' --  Eneloping Mist
+--	spell '191840' '1.5' --  Essence Font
+--	spell '119611' '2.0' --  Renewing Mists
+--	spell '115310' '0.5' --  Revival
+--	spell '116670' '0.5' --  Vivify
+--	spell '124081' '1.5' --  Talent: Zen Pulse
+--	spell '162530' '1.5' --  Talent: Refreshing Jade Wind
+--	spell '198756' '2.5' --  Talent: Invoke Chi'Ji
+--	spell '199668' '2.0' --  Artifact: Blessing of Yu'lon
+--	spell '199656' '2.0' --  Artifact: Celestial Breath
+--	alias '198533' '115175' --  [Statue Merger] Talent: Jade Serpent Statue
+--	alias '228649' '100784' --  [Passive Merger] Teachings of the Monastery
+--end
 
 
 class "PALADIN"
