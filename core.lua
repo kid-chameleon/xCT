@@ -520,9 +520,9 @@ function x:UpdateSpamSpells()
     spells[class].args = {}
     for spec, index in pairs(specs) do
       local name, _ = "All Specializations"
-      if index ~= 0 then
-        _, name = GetSpecializationInfoByID(spec)
-      end
+      --if index ~= 0 then
+      --  _, name = GetSpecializationInfoByID(spec)
+      --end
       spells[class].args["specHeader"..index] = {
         type = 'header',
         order = index * 2,
