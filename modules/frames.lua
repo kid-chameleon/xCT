@@ -9,7 +9,7 @@
  [=====================================]
  [  Author: Dandraffbal-Stormreaver US ]
  [  xCT+ Version 4.x.x                 ]
- [  ©2018. All Rights Reserved.        ]
+ [  ©2020. All Rights Reserved.        ]
  [====================================]]
 
 local build = select(4, GetBuildInfo())
@@ -53,7 +53,7 @@ x.FrameTitles = {
 	["damage"]		= "Damage (Incoming)",			-- DAMAGE,
 	["healing"]		= "Healing (Incoming)",			-- SHOW_COMBAT_HEALING,
 	["power"]		= "Class Power",				-- COMBAT_TEXT_SHOW_ENERGIZE_TEXT,
-	["class"]		= "Combo",						-- COMBAT_TEXT_SHOW_COMBO_POINTS_TEXT,
+	--["class"]		= "Combo",						-- COMBAT_TEXT_SHOW_COMBO_POINTS_TEXT,
 	["procs"]		= "Special Effects (Procs)",	-- COMBAT_TEXT_SHOW_REACTIVES_TEXT,
 	["loot"]		= "Loot & Money",				-- LOOT,
 }
@@ -85,7 +85,7 @@ local function Frame_SendTestMessage_OnUpdate(self, e)
 		x:AddMessage(self.frameName, "0", self.settings.fontColor or {1,1,0})
 
 		if not self.timer then
-			self.timer = CreateFrame("FRAME")
+			self.timer = CreateFrame("FRAME",nil,nil, 'BackDropTemplate')
 			self.timer.name = self.frameName
 			self.timer.f = self
 			self.timer:SetScript("OnUpdate", autoClearFrame_OnUpdate)
@@ -128,7 +128,7 @@ function x:UpdateFrames(specificFrame)
 			if x.frames[framename] then
 				f = x.frames[framename]
 			else
-				f = CreateFrame("ScrollingMessageFrame", "xCT_Plus"..framename.."Frame", UIParent)
+				f = CreateFrame("ScrollingMessageFrame", "xCT_Plus"..framename.."Frame", UIParent, "BackdropTemplate")
 				f:SetSpacing(2)
 				f:ClearAllPoints()
 				f:SetMovable(true)
@@ -138,14 +138,14 @@ function x:UpdateFrames(specificFrame)
 				f:SetClampedToScreen(true)
 				f:SetShadowColor(0, 0, 0, 0)
 
-				f.sizing = CreateFrame("Frame", "xCT_Plus"..framename.."SizingFrame", f)
+				f.sizing = CreateFrame("Frame", "xCT_Plus"..framename.."SizingFrame", f, 'BackDropTemplate')
 				f.sizing.parent = f
 				f.sizing:SetHeight(16)
 				f.sizing:SetWidth(16)
 				f.sizing:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -1, 1)
 				f.sizing:Hide()
 
-				f.moving = CreateFrame("Frame", "xCT_Plus"..framename.."MovingFrame", f)
+				f.moving = CreateFrame("Frame", "xCT_Plus"..framename.."MovingFrame", f, 'BackDropTemplate')
 				f.moving.parent = f
 				f.moving:SetPoint("TOPLEFT", f, "TOPLEFT", 1, -1)
 				f.moving:SetPoint("TOPRIGHT", f, "TOPRIGHT", -1, -21)
@@ -166,9 +166,11 @@ function x:UpdateFrames(specificFrame)
 			end
 
 			-- Set the position
-			f:SetWidth(settings.Width)
-			f:SetHeight(settings.Height)
-			f:SetPoint("CENTER", settings.X, settings.Y)
+			if settings.enabledFrame then
+				f:SetWidth(settings.Width)
+				f:SetHeight(settings.Height)
+				f:SetPoint("CENTER", settings.X, settings.Y)
+			end
 
 			-- For keeping the frame on the screen
 			--f:SetClampRectInsets(0, 0, settings.fontSize, 0)
@@ -297,19 +299,18 @@ end
 --	frame is specified.
 -- =====================================================
 function x:Abbreviate(amount, frameName)
-	local message = tostring(amount)
 	local isNegative = amount < 0
-
 	if isNegative then amount = -amount end
+	local message = tostring(amount)
 
 	if frameName and self.db.profile.frames[frameName] and self.db.profile.frames[frameName].megaDamage then
 		if self.db.profile.spells.formatAbbreviate then
 			if GetLocale() == "koKR" then
 				if (amount >= 100000000) then
 					if self.db.profile.megaDamage.decimalPoint then
-						message = tostring(mfloor((amount + 5000000) / 10000000) / 10) .. self.db.profile.megaDamage.millionSymbol
+						message = tostring(mfloor((amount + 5000000) / 10000000) / 10) .. self.db.profile.megaDamage.billionSymbol
 					else
-						message = tostring(mfloor((amount + 50000000) / 100000000)) .. self.db.profile.megaDamage.millionSymbol
+						message = tostring(mfloor((amount + 50000000) / 100000000)) .. self.db.profile.megaDamage.billionSymbol
 					end
 				elseif (amount >= 10000) then
 					if self.db.profile.megaDamage.decimalPoint then
@@ -327,9 +328,9 @@ function x:Abbreviate(amount, frameName)
 			else
 				if (amount >= 1000000000) then
 					if self.db.profile.megaDamage.decimalPoint then
-						message = tostring(mfloor((amount + 50000000) / 100000000) / 10) .. self.db.profile.megaDamage.millionSymbol
+						message = tostring(mfloor((amount + 50000000) / 100000000) / 10) .. self.db.profile.megaDamage.billionSymbol
 					else
-						message = tostring(mfloor((amount + 500000000) / 1000000000)) .. self.db.profile.megaDamage.millionSymbol
+						message = tostring(mfloor((amount + 500000000) / 1000000000)) .. self.db.profile.megaDamage.billionSymbol
 					end
 				elseif (amount >= 1000000) then
 					if self.db.profile.megaDamage.decimalPoint then
@@ -412,7 +413,7 @@ end
 
 -- WoW - Battle for Azeroth doesn't support fading textures with SetAlpha?
 -- We have to do it on a font string level
-local ScrollingMessageFrame_OverrideAlpha_Worker = CreateFrame("FRAME")
+local ScrollingMessageFrame_OverrideAlpha_Worker = CreateFrame("FRAME", nil, nil, 'BackDropTemplate')
 ScrollingMessageFrame_OverrideAlpha_Worker:SetScript("OnUpdate", function ()
 	local now, alpha, scale = GetTime()
 	for name, frame in pairs(x.frames) do
@@ -636,6 +637,7 @@ do
 				                                  message,
 				                                  settings.iconsEnabled and settings.iconsSize or -1,
 				                                  settings.fontJustify,
+				                                  settings.spacerIconsEnabled,
 				                                  strColor,
 				                                  true, -- Merge Override = true
 				                                  #item.entries )
@@ -644,6 +646,7 @@ do
 				                                  message,
 				                                  settings.iconsEnabled and settings.iconsSize or -1,
 				                                  settings.fontJustify,
+				                                  settings.spacerIconsEnabled,
 				                                  strColor,
 				                                  true, -- Merge Override = true
 				                                  #item.entries )
@@ -666,7 +669,7 @@ do
 		index = index + 1
 	end
 
-	x.merge = CreateFrame("FRAME")
+	x.merge = CreateFrame("FRAME",nil, nil, 'BackDropTemplate')
 	x.merge:SetScript("OnUpdate", x.OnSpamUpdate)
 end
 
@@ -1025,7 +1028,7 @@ function x.TestMoreUpdate(self, elapsed)
 				if x.db.profile.frames[output].customColor then
 					color = x.db.profile.frames[output].fontColor
 				end
-				message = x:GetSpellTextureFormatted( x.db.profile.frames["outgoing"].iconsEnabled and GetRandomSpellID() or -1, message, x.db.profile.frames["outgoing"].iconsSize, x.db.profile.frames["outgoing"].fontJustify, nil, merged, multistriked )
+				message = x:GetSpellTextureFormatted( x.db.profile.frames["outgoing"].iconsEnabled and GetRandomSpellID() or -1, message, x.db.profile.frames["outgoing"].iconsSize, x.db.profile.frames["outgoing"].spacerIconsEnabled, x.db.profile.frames["outgoing"].fontJustify, nil, merged, multistriked )
 				x:AddMessage(output, message, color)
 			elseif self == x.frames["critical"] and random(2) % 2 == 0 then
 				local output, color = "critical", GetRandomSpellColor()
@@ -1042,7 +1045,7 @@ function x.TestMoreUpdate(self, elapsed)
 				if x.db.profile.frames[output].customColor then
 					color = x.db.profile.frames[output].fontColor
 				end
-				message = x:GetSpellTextureFormatted( x.db.profile.frames["critical"].iconsEnabled and GetRandomSpellID() or -1, message, x.db.profile.frames["critical"].iconsSize, x.db.profile.frames["critical"].fontJustify, nil, merged, multistriked )
+				message = x:GetSpellTextureFormatted( x.db.profile.frames["critical"].iconsEnabled and GetRandomSpellID() or -1, message, x.db.profile.frames["critical"].iconsSize, x.db.profile.frames["critical"].fontJustify, x.db.profile.frames["critical"].spacerIconsEnabled, nil, merged, multistriked )
 				x:AddMessage(output, message, color)
 			elseif self == x.frames["damage"] and random(2) % 2 == 0 then
 				local output, color = "damage", {1, random(100) / 255, random(100) / 255}

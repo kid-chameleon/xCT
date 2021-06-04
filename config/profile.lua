@@ -9,11 +9,23 @@
  [=====================================]
  [  Author: Dandraffbal-Stormreaver US ]
  [  xCT+ Version 4.x.x                 ]
- [  ©2018. All Rights Reserved.        ]
+ [  ©2020. All Rights Reserved.        ]
  [====================================]]
 
 -- This file is a static default profile.  After your first profile is created, editing this file will do nothing.
 local ADDON_NAME, addon = ...
+
+-- taken from: https://github.com/Gethe/wow-ui-source/blob/e337b8949ffad2876ea0489d8331db2414342d32/FrameXML/CombatFeedback.lua
+do -- blizzard hiding globals?
+  SCHOOL_MASK_NONE      = 0x00;
+  SCHOOL_MASK_PHYSICAL  = 0x01;
+  SCHOOL_MASK_HOLY      = 0x02;
+  SCHOOL_MASK_FIRE      = 0x04;
+  SCHOOL_MASK_NATURE    = 0x08;
+  SCHOOL_MASK_FROST     = 0x10;
+  SCHOOL_MASK_SHADOW    = 0x20;
+  SCHOOL_MASK_ARCANE    = 0x40;
+end
 
 -- =====================================================
 -- CreateMergeSpellEntry(
@@ -229,6 +241,7 @@ addon.defaults = {
         -- icons
         ["iconsEnabled"] = true,
         ["iconsSize"] = 16,
+        ["spacerIconsEnabled"] = true,
 
         -- scrollable
         ["enableScrollable"] = false,
@@ -351,6 +364,7 @@ addon.defaults = {
         -- icons
         ["iconsEnabled"] = true,
         ["iconsSize"] = 16,
+        ["spacerIconsEnabled"] = true,
 
         -- scrollable
         ["enableScrollable"] = false,
@@ -364,13 +378,14 @@ addon.defaults = {
         ["visibilityTime"] = 5,
 
         -- special tweaks
+        ["enableAutoAttack_Outgoing"] = true, -- OLD: enableAutoAttack
+        ["enablePetAutoAttack_Outgoing"] = true,
+
         ["enableOutDmg"] = true,
         ["enableOutHeal"] = true,
         ["enableOutAbsorbs"] = true,
         ["enablePetDmg"] = true,
-        ["enablePetAutoAttack"] = true,
         ["enableVehicleDmg"] = true,
-        ["enableAutoAttack"] = true,
         ["enableDotDmg"] = true,
         ["enableHots"] = true,
         ["enableImmunes"] = true,
@@ -380,7 +395,8 @@ addon.defaults = {
         ["enableKillCommand"] = false,
 
         ["enableOverhealing"] = true,
-        ["enableOverhealingFormat"] = true,
+        ["enableOverhealingFormat"] = false,
+        ["enableOverhealingSubtraction"] = false,
         ["overhealingPrefix"] = " |cffFFFFFF(O: ",
         ["overhealingPostfix"] = ")|r",
       },
@@ -477,6 +493,7 @@ addon.defaults = {
         -- icons
         ["iconsEnabled"] = true,
         ["iconsSize"] = 16,
+        ["spacerIconsEnabled"] = true,
 
         -- scrollable
         ["enableScrollable"] = false,
@@ -490,8 +507,8 @@ addon.defaults = {
         ["visibilityTime"] = 5,
 
         -- special tweaks
-        ["showSwing"] = true,
-        ["prefixSwing"] = true,
+        ["enableAutoAttack_Critical"] = true, -- OLD: showSwing
+        ["prefixAutoAttack_Critical"] = true, -- OLD: prefixSwing
         ["petCrits"] = false,
       },
 
@@ -631,6 +648,7 @@ addon.defaults = {
         ["iconsEnabled"] = true,
         ["iconsSize"] = 14,
         ["iconsEnabledAutoAttack"] = true,
+        ["spacerIconsEnabled"] = true,
 
         -- scrollable
         ["enableScrollable"] = false,
@@ -740,6 +758,7 @@ addon.defaults = {
         -- icons
         ["iconsEnabled"] = true,
         ["iconsSize"] = 16,
+        ["spacerIconsEnabled"] = true,
 
         -- scrollable
         ["enableScrollable"] = false,
@@ -760,7 +779,7 @@ addon.defaults = {
         ["showOnlyPetHeals"] = false,
       },
 
-      class = {
+      --[[class = {
         ["enabledFrame"] = true,
         ["alpha"] = 100,
 
@@ -788,7 +807,7 @@ addon.defaults = {
           ['comboPoints']     = { enabled = false, desc = "Combo Points",     default = { 1.00, 0.82, 0.00 } },
           ['comboPointsMax']  = { enabled = false, desc = "Max Combo Points", default = { 0.00, 0.82, 1.00 } },
         },
-      },
+      },]]
 
       power = {
         ["enabledFrame"] = true,
@@ -819,24 +838,27 @@ addon.defaults = {
         ["customColor"] = false,
         ["fontColor"] = { 1.00, 1.00, 1.00 },
 
-        -- TODO: Update these ( See http://www.wowinterface.com/forums/showthread.php?t=53140 )
+        -- https://github.com/Gethe/wow-ui-source/blob/e337b8949ffad2876ea0489d8331db2414342d32
+        -- /AddOns/Blizzard_CombatLog/Blizzard_CombatLog.lua#L1797
         colors = {
-          ['color_MANA']            = { enabled = false, desc = MANA,           default = { 0.00, 0.00, 1.00 } },
-          ['color_RAGE']            = { enabled = false, desc = RAGE,           default = { 1.00, 0.00, 0.00 } },
-          ['color_FOCUS']           = { enabled = false, desc = FOCUS,          default = { 1.00, 0.50, 0.25 } },
-          ['color_ENERGY']          = { enabled = false, desc = ENERGY,         default = { 1.00, 1.00, 0.00 } },
-          ['color_RUNES']           = { enabled = false, desc = RUNES,          default = { 0.50, 0.50, 0.50 } },
-          ['color_RUNIC_POWER']     = { enabled = false, desc = RUNIC_POWER,    default = { 0.00, 0.82, 1.00 } },
-          ['color_SOUL_SHARDS']     = { enabled = false, desc = SOUL_SHARDS,    default = { 0.50, 0.32, 0.55 } },
-          ['color_LUNAR_POWER']     = { enabled = false, desc = LUNAR_POWER,    default = { 0.30, 0.52, 0.90 } },
-          ['color_HOLY_POWER']      = { enabled = false, desc = HOLY_POWER,     default = { 0.95, 0.90, 0.60 } },
-          ['color_MAELSTROM']       = { enabled = false, desc = MAELSTROM,      default = { 0.00, 0.50, 1.00 } },
-          ['color_INSANITY']        = { enabled = false, desc = INSANITY,       default = { 0.40, 0.00, 0.80 } },
-          ['color_CHI']             = { enabled = false, desc = CHI,            default = { 0.71, 1.00, 0.92 } },
-          ['color_ARCANE_CHARGES']  = { enabled = false, desc = ARCANE_CHARGES, default = { 0.10, 0.10, 0.98 } },
-          ['color_FURY']            = { enabled = false, desc = FURY,           default = { r = 0.788, g = 0.259, b = 0.992 } },
-          ['color_PAIN']            = { enabled = false, desc = PAIN,           default = { r = 1.000, g = 0.612, b = 0.000 } },
-          ["color_ALTERNATE_POWER"] = { enabled = false, desc = ALTERNATE_RESOURCE_TEXT, default = { r = 1.00, g = 1.00, b = 1.00 } },
+          ['color_MANA'] = { enabled = false, desc = MANA, default = {  0.00,  0.00,  1.00 } },
+          ['color_RAGE'] = { enabled = false, desc = RAGE, default = {  1.00,  0.00,  0.00 } },
+          ['color_FURY'] = { enabled = false, desc = FURY, default = { 0.788, 0.259, 0.992 } },
+          ['color_PAIN'] = { enabled = false, desc = PAIN, default = { 1.000, 0.612, 0.000 } },
+
+          ['color_FOCUS']  = { enabled = false, desc = FOCUS,  default = { 1.00, 0.50, 0.25 } },
+          ['color_RUNES']  = { enabled = false, desc = RUNES,  default = { 0.50, 0.50, 0.50 } },
+          ['color_ENERGY'] = { enabled = false, desc = ENERGY, default = { 1.00, 1.00, 0.00 } },
+
+          ['color_CHI_POWER']            = { enabled = false, desc = CHI_POWER,            default = { 0.71, 1.00, 0.92 } },
+          ['color_HOLY_POWER']           = { enabled = false, desc = HOLY_POWER,           default = { 0.95, 0.90, 0.60 } },
+          ['color_RUNIC_POWER']          = { enabled = false, desc = RUNIC_POWER,          default = { 0.00, 0.82, 1.00 } },
+          ['color_SOUL_SHARDS']          = { enabled = false, desc = SOUL_SHARDS,          default = { 0.50, 0.32, 0.55 } },
+          ['color_LUNAR_POWER']          = { enabled = false, desc = LUNAR_POWER,          default = { 0.30, 0.52, 0.90 } },
+          ['color_INSANITY_POWER']       = { enabled = false, desc = INSANITY_POWER,       default = { 0.40, 0.00, 0.80 } },
+          ['color_MAELSTROM_POWER']      = { enabled = false, desc = MAELSTROM_POWER,      default = { 0.00, 0.50, 1.00 } },
+          ['color_ALTERNATE_POWER'] = { enabled = false, desc = ALTERNATE_POWER_TEXT, default = { 0.10, 0.10, 0.98 } },
+          ['color_ARCANE_CHARGES_POWER'] = { enabled = false, desc = ARCANE_CHARGES_POWER, default = { 0.10, 0.10, 0.98 } },
         },
 
         -- scrollable
@@ -867,13 +889,11 @@ addon.defaults = {
         ["disableResource_SOUL_SHARDS"]      = false,
         ["disableResource_LUNAR_POWER"]      = true,
 
+        ["disableResource_CHI_POWER"]        = true,
         ["disableResource_HOLY_POWER"]       = false,
-        ["disableResource_ALTERNATE_POWER"]  = true,
-        ["disableResource_CHI"]              = true,
-        ["disableResource_INSANITY"]         = false,
+        ["disableResource_INSANITY_POWER"]   = false,
+        ["disableResource_MAELSTROM_POWER"]  = true,
 
-        --["disableResource_OBSOLETE"]       = true,
-        --["disableResource_OBSOLETE2"]      = true,
         ["disableResource_ARCANE_CHARGES"]   = false,
         ["disableResource_FURY"]             = false,
         ["disableResource_PAIN"]             = false,
@@ -914,6 +934,7 @@ addon.defaults = {
         -- icons
         ["iconsEnabled"] = true,
         ["iconsSize"] = 16,
+        ["spacerIconsEnabled"] = true,
 
         -- scrollable
         ["enableScrollable"] = false,
@@ -958,6 +979,7 @@ addon.defaults = {
         -- icons
         ["iconsEnabled"] = true,
         ["iconsSize"] = 16,
+        ["spacerIconsEnabled"] = true,
 
         -- scrollable
         ["enableScrollable"] = false,
@@ -977,6 +999,7 @@ addon.defaults = {
         ["showItemTotal"] = true,
         ["showCrafted"] = true,
         ["showQuest"] = true,
+        ["showPurchased"] = false,
         ["colorBlindMoney"] = false,
         ["filterItemQuality"] = 3,
       },

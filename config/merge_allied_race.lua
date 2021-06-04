@@ -14,13 +14,11 @@
 
 local ADDON_NAME, addon = ...
 
--- New way of doing merge items
--- 'alias' takes the original spell id and a replacement spell id
--- item takes a item id, the merge interval in seconds, and a helpful description of the item
--- header switches the header for the next set of items
-local _, _, _, alias, item, header = unpack(addon.merge_helpers)
+-- New way of doing merge spells
+-- 'rspell' takes a spell id and a merge interval in seconds
+local _, _, _, _, _, _, race, rspell = unpack(addon.merge_helpers)
 
-header "|cffA32C12Other|r |cff798BDDSpells|r"
+race "|cfff2ff00Races|r™ |cff8a8dedVoid Elfs|r"
 do
-	item '143924' '3.5' "Item Leech"
+	rspell '259756' '2.5' --  Entropic embrace
 end

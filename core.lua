@@ -9,7 +9,7 @@
  [=====================================]
  [  Author: Dandraffbal-Stormreaver US ]
  [  xCT+ Version 4.x.x                 ]
- [  ©2018. All Rights Reserved.        ]
+ [  ©2020. All Rights Reserved.        ]
  [====================================]]
 
 -- Dont do anything for Legion
@@ -78,11 +78,11 @@ local function ProfileReset()
 end
 
 local function CheckExistingProfile()
-	local key = UnitName("player").." - "..GetRealmName()
-	return xCTSavedDB
-	   and xCTSavedDB.profileKeys
-	   and xCTSavedDB.profileKeys[key]
-	   and xCTSavedDB.profiles[xCTSavedDB.profileKeys[key]]
+  local key = UnitName("player").." - "..GetRealmName()
+  return xCTSavedDB
+     and xCTSavedDB.profileKeys
+     and xCTSavedDB.profileKeys[key]
+     and xCTSavedDB.profiles[xCTSavedDB.profileKeys[key]]
 end
 
 -- Handle Addon Initialized
@@ -148,7 +148,7 @@ function x:OnInitialize()
 end
 
 -- Need to create a handle to update frames when every other addon is done.
-local frameUpdate = CreateFrame("FRAME")
+local frameUpdate = CreateFrame("FRAME", nil, nil, 'BackDropTemplate')
 frameUpdate:RegisterEvent("PLAYER_ENTERING_WORLD")
 frameUpdate:SetScript("OnEvent", function(self)
   self:UnregisterEvent("PLAYER_ENTERING_WORLD")
@@ -176,7 +176,18 @@ local function VersionToTable( version )
   return t
 end
 
-local function CompareVersions( a, b )
+local function CompareVersions( a, b, debug )
+
+  if debug then
+  	print('First Build:')
+    for i,v in pairs(a) do
+      print('    '..i..' = '..tostring(v))
+    end
+    print('Second Build:')
+    for i,v in pairs(b) do
+      print('    '..i..' = '..tostring(v))
+    end
+  end
 
   -- Compare Major numbers
   if a.major > b.major then
@@ -330,6 +341,13 @@ function x:CompatibilityLogic( existing )
         end
       end
 
+      -- Clean up class frame from database
+      if CompareVersions( VersionToTable("4.5.1-beta5"), previousVersion ) > 0 then
+        if currentVersion.devBuild then --currentVersion.devBuild then
+          x.MigratePrint("|cffFFFF00Cleaning Frame DB (Removing Class)|r")
+        end
+        self.db.profile.frames.class = nil
+      end
 
     else
       -- Created New: Dont need to do anything right now
@@ -340,7 +358,6 @@ function x:CompatibilityLogic( existing )
 end
 
 function x.CleanUpForLegion()
-  print("Cleaning Up Legion")
   local key = xCTSavedDB.profileKeys[UnitName("player").." - "..GetRealmName()]
   xCTSavedDB.profiles[key] = {}
   ReloadUI()
@@ -348,39 +365,39 @@ end
 
 local getSpellDescription
 do
-	local Descriptions, description = { }, nil
-	local tooltip = CreateFrame('GameTooltip')
-	tooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
+  local Descriptions, description = { }, nil
+  local tooltip = CreateFrame('GameTooltip', nil, nil, 'BackDropTemplate')
+  tooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
 
-	-- Add FontStrings to the tooltip
-	local LeftStrings, temporaryRight = {}, nil
-	for i = 1, 5 do
-		LeftStrings[i] = tooltip:CreateFontString()
-		temporaryRight = tooltip:CreateFontString()
-		LeftStrings[i]:SetFontObject(GameFontNormal)
-		temporaryRight:SetFontObject(GameFontNormal)
-		tooltip:AddFontStrings(LeftStrings[i], temporaryRight)
-	end
+  -- Add FontStrings to the tooltip
+  local LeftStrings, temporaryRight = {}, nil
+  for i = 1, 5 do
+    LeftStrings[i] = tooltip:CreateFontString()
+    temporaryRight = tooltip:CreateFontString()
+    LeftStrings[i]:SetFontObject(GameFontNormal)
+    temporaryRight:SetFontObject(GameFontNormal)
+    tooltip:AddFontStrings(LeftStrings[i], temporaryRight)
+  end
 
-	function getSpellDescription(spellID)
-		if Descriptions[spellID] then
-			return Descriptions[spellID]
-		end
+  function getSpellDescription(spellID)
+    if Descriptions[spellID] then
+      return Descriptions[spellID]
+    end
 
-		tooltip:SetSpellByID(spellID)
+    tooltip:SetSpellByID(spellID)
 
-		description = ""
-		if LeftStrings[tooltip:NumLines()] then
-			description = LeftStrings[ tooltip:NumLines() ]:GetText()
-		end
+    description = ""
+    if LeftStrings[tooltip:NumLines()] then
+      description = LeftStrings[ tooltip:NumLines() ]:GetText()
+    end
 
-		if description == "" then
-			description = "No Description"
-		end
+    if description == "" then
+      description = "No Description"
+    end
 
-		Descriptions[spellID] = description
-		return description
-	end
+    Descriptions[spellID] = description
+    return description
+  end
 end
 
 -- Spammy Spell Get/Set Functions
@@ -514,7 +531,8 @@ function x:UpdateSpamSpells()
 
   local spells = addon.options.args.spells.args.classList.args
   local global = addon.options.args.spells.args.globalList.args
-
+  local racetab = addon.options.args.spells.args.raceList.args
+  
   -- Clear out the old spells
   for class, specs in pairs(CLASS_NAMES) do
     spells[class].args = {}
@@ -539,7 +557,10 @@ function x:UpdateSpamSpells()
   -- Create a list of the categories (to be sorted)
   local categories = {}
   for _, entry in pairs(addon.merges) do
-    if not CLASS_NAMES[entry.class] then
+
+    --TODO better code when i understand more the code
+
+    if not CLASS_NAMES[entry.class] and entry.desc ~= "Racial Spell" then
       table.insert(categories, entry.class)
     end
   end
@@ -562,13 +583,52 @@ function x:UpdateSpamSpells()
     categoryOffsets[category] = currentIndex + 1
   end
 
+------------------------------------------------------
+-- Clear out the old spells (racetab)
+-- Dirty add have to reform when better understanding the code
+  for index in pairs(racetab) do
+    racetab[index] = nil
+  end
+
+  -- Create a list of the categories (to be sorted)
+  local rcategories = {}
+  for _, entry in pairs(addon.merges) do
+    --TODO better code when i understand more the code
+    if not CLASS_NAMES[entry.class] and entry.desc == "Racial Spell" then
+      table.insert(rcategories, entry.class)
+    end
+  end
+
+  -- Show Categories in alphabetical order
+  table.sort(rcategories)
+
+  -- Assume less than 1000 entries per category ;)
+  local rcategoryOffsets = {}
+  for i, rcategory in pairs(rcategories) do
+    local rcurrentIndex = i * 1000
+
+    -- Create the Category Header
+    racetab[rcategory] = {
+      type = 'description',
+      order = rcurrentIndex,
+      name = "\n"..rcategory,
+      fontSize = 'large',
+    }
+    rcategoryOffsets[rcategory] = rcurrentIndex + 1
+  end
+------------------------------------------------------
+
+
+
+
   -- Update the UI
   for spellID, entry in pairs(addon.merges) do
     local name = GetSpellInfo(spellID)
     if name then
-
+    
+    --TODO better code when i understand more the code
       -- Create a useful description for the spell
-      local spellDesc = getSpellDescription(spellID) or "No Description"
+      local spellDesc = getSpellDescription(spellID) or "No Description"    
       local desc = ""
       if entry.desc and not CLASS_NAMES[entry.class] then
         desc = "|cff9F3ED5" .. entry.desc .. "|r\n\n"
@@ -579,7 +639,7 @@ function x:UpdateSpamSpells()
       else
         desc = desc .. "\n|cffFF0000Interval|r Merge every |cffFFFF00" .. tostring(entry.interval) .. "|r seconds"
       end
-
+    
       -- Add the spell to the UI
       if CLASS_NAMES[entry.class] then
         local index = CLASS_NAMES[entry.class][tonumber(entry.desc) or 0]
@@ -591,6 +651,16 @@ function x:UpdateSpamSpells()
           get = SpamSpellGet,
           set = SpamSpellSet,
         }
+    elseif entry.desc == "Racial Spell" then
+      racetab[tostring(spellID)] = {
+          order = rcategoryOffsets[entry.class],
+          type = 'toggle',
+          name = name,
+          desc = desc,
+          get = SpamSpellGet,
+          set = SpamSpellSet,
+        }
+        rcategoryOffsets[entry.class] = rcategoryOffsets[entry.class] + 1
       else
         global[tostring(spellID)] = {
           order = categoryOffsets[entry.class],
@@ -1362,11 +1432,21 @@ local funcColorResetHidden = function(info)
     return not x.db.profile.frames[info[#info-3]].colors[info[#info-1]].colors[color].enabled or
       tableCompare(x.db.profile.frames[info[#info-3]].colors[info[#info-1]].colors[color].color, x.db.profile.frames[info[#info-3]].colors[info[#info-1]].colors[color].default)
   elseif info[#info-3] == 'fontColors' then
-    return not x.db.profile.frames[info[#info-4]].colors[info[#info-2]].colors[info[#info-1]].colors[color].color or
+    return not x.db.profile.frames[info[#info-4]].colors[info[#info-2]].colors[info[#info-1]].colors[color].enabled or
       tableCompare(x.db.profile.frames[info[#info-4]].colors[info[#info-2]].colors[info[#info-1]].colors[color].color, x.db.profile.frames[info[#info-4]].colors[info[#info-2]].colors[info[#info-1]].colors[color].default)
   elseif info[#info-1] == 'SpellSchools' then
     return not x.db.profile.SpellColors[color].enabled or
       tableCompare(x.db.profile.SpellColors[color].color, x.db.profile.SpellColors[color].default)
+  end
+end
+
+local funcColorDisabled = function(info)
+  if info[#info-1] == 'fontColors' then
+    return x.db.profile.frames[info[#info-2]].customColor
+  elseif info[#info-2] == 'fontColors' then
+    return x.db.profile.frames[info[#info-3]].customColor
+  elseif info[#info-3] == 'fontColors' then
+    return x.db.profile.frames[info[#info-4]].customColor
   end
 end
 
@@ -1389,6 +1469,7 @@ local function GenerateColorOptionsTable_Entry(colorName, settings, options, ind
     get = getColorDB,
     set = setColorDB,
     desc = "Enable a custom color for |cff798BDD"..settings.desc.."|r.",
+    disabled = funcColorDisabled,
   }
   options[colorName.."_color"] = {
     order = index + 1,
@@ -1398,6 +1479,7 @@ local function GenerateColorOptionsTable_Entry(colorName, settings, options, ind
     set = setColorDB,
     desc = "Change the color for |cff798BDD"..settings.desc.."|r.",
     hidden = funcColorHidden,
+    disabled = funcColorDisabled,
   }
   options[colorName.."_reset"] = {
     type = 'execute',
@@ -1407,6 +1489,7 @@ local function GenerateColorOptionsTable_Entry(colorName, settings, options, ind
     func = funcColorReset,
     desc = "Resets |cff798BDD"..settings.desc.."|r back to the default color.",
     hidden = funcColorResetHidden,
+    disabled = funcColorDisabled,
   }
   options["spacer"..index] = {
     order = index + 3,
@@ -1822,7 +1905,7 @@ function x:HideConfigTool( wait )
   -- If the item that is call needs the frame for another unit of time
   if wait then
     if not x.waiterHideConfig then
-      x.waiterHideConfig = CreateFrame("FRAME")
+      x.waiterHideConfig = CreateFrame("FRAME", nil, nil , 'BackDropTemplate')
     end
 
     x.waiterHideConfig:SetScript("OnUpdate", HideConfigTool_OnUpdate)
