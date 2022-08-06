@@ -18,35 +18,26 @@ local ADDON_NAME, addon = ...
 -- 'alias' takes the original spell id and a replacement spell id
 -- item takes a item id, the merge interval in seconds, and a helpful description of the item
 -- header switches the header for the next set of items
-local _, _, _, alias, item, header = unpack(addon.merge_helpers)
+local spell, _, _, alias, item, header = unpack(addon.merge_helpers)
 
---[[header "|cffd2d3d8SL|r™ |cff798BDDTemplates|r"
-do
-end
-
-header "|cffd2d3d8SL|r™ |cff798BDDConsumables|r"
-do
-end
-
-header "|cffd2d3d8SL|r™ |cff798BDDItems|r"
-do
-end
-
-header "|cffd2d3d8SL|r™ |cff798BDDWorld Zones|r"
-do
-end
-
-header "|cffd2d3d8SL|r™ |cff798BDDQuest Items|r"
-do
-end
---]]
 header "|cffd2d3d8ShadowLands|r™ |cff798BDDCovenants|r"
 do
 	-- Venthyr
-	-- warlock
-	item '321792' '1.0' "Impending Catastrophe"
 	alias '322167' '321792' -- Impending Catastrophe dot
 	alias '322170' '321792' -- Impending Catastrophe dot
+	alias '325640' '234153' --  Drain life multi with soulrot
+
+	-- Warlock
+	item '321792' '1.0' "Impending Catastrophe"
+
+	-- Night Fae
+	-- Monk
+	spell '327264' '0.5' -- Faeline Stomp (Damage)
+	spell '345727' '0.5' -- Faeline Stomp Heal / Windwalker Bonnus Damage
+
+	-- Necrolords
+	item '323710' '1.0' "Abomination Limb"
+	alias '323798' '323710' -- Abomination Limb
 end
 
 header "|cffd2d3d8ShadowLands|r™ |cff798BDDQuest Spells|r"
@@ -59,16 +50,16 @@ header "|cffd2d3d8ShadowLands|r™ |cff798BDDTrinkets|r"
 do
 	item '180117' '0.5' "Empyreal Ordnance"
 	alias '344540' '180117' -- Empyreal Ordnance dot
-	
+
 	item '178769' '1.0' "Infinitely Divisible Ooze"
 	alias '345495' '178769' -- Infinitely Divisible Ooze damage
-	
+
 	item '178772' '0.5' "Satchel of Misbegotten Minions"
 	alias '345638' '178772' -- Satchel of Misbegotten Minions damage
-	
+
 	item '184021' '2.0' "Glyph of Assimilation"
 	alias '345319' '184021' -- Glyph of Assimilation dot
-	
+
 	item '182453' '0.5' "Twilight Bloom"
 	alias '339545' '182453' -- Twilight Bloom: Twilight Restoration
 end
@@ -81,3 +72,7 @@ do
 	alias '344752' '336214' -- Eternal Call to the Void: Mind Sear
 end
 
+header "|cffd2d3d8ShadowLands|r™ |cff798BDDEnchants|r"
+do
+	item '324184' '1.5' "Lightless Force"
+end
