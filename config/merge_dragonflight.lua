@@ -18,9 +18,22 @@ local ADDON_NAME, addon = ...
 -- 'alias' takes the original spell id and a replacement spell id
 -- item takes a item id, the merge interval in seconds, and a helpful description of the item
 -- header switches the header for the next set of items
-local _, _, _, alias, item, header = unpack(addon.merge_helpers)
+local spell, _, _, alias, item, header = unpack(addon.merge_helpers)
 
-header "|cffA32C12Other|r |cff798BDDSpells|r"
+
+header "10.x |cff33937FDragonflight|r™ |cff798BDDTrinkets|r"
 do
-	item '143924' '3.5' "Item Leech"
+	alias '425461' '425701' -- Shadowflame Lash -> Trinket: Tainted Rageheart
+end
+
+header "10.x |cff33937FDragonflight|r™ |cff798BDDLegendaries|r"
+do
+	item '417134' '3.0' "Rage of Fyr'alath"
+	alias '424094' '417134' -- Rage of Fyr'alath -> Weapon Fyr'alath
+	alias '413584' '417134' -- Explosive Rage -> Weapon Fyr'alath
+end
+
+header "|cffd2d3d8Dragonflight|r™ |cff798BDDEnchants|r"
+do
+	alias '426527' '426535' -- Amirdrassil Head Enchant (Melee) - 2nd Effect
 end
