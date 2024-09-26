@@ -20,7 +20,8 @@ local build = select(4, GetBuildInfo())
 local AddonName, addon = ...
 
 local sgsub, ipairs, pairs, type, string_format, table_insert, table_remove, table_sort, print, tostring, tonumber, select, string_lower, collectgarbage, string_match, string_find =
-  string.gsub, ipairs, pairs, type, string.format, table.insert, table.remove, table.sort, print, tostring, tonumber, select, string.lower, collectgarbage, string.match, string.find
+    string.gsub, ipairs, pairs, type, string.format, table.insert, table.remove, table.sort, print, tostring, tonumber,
+    select, string.lower, collectgarbage, string.match, string.find
 
 -- compares a tables values
 local function tableCompare(t1, t2)
@@ -35,7 +36,7 @@ local function tableCompare(t1, t2)
     end
   end
 
-  for i,v in pairs(t1) do
+  for i, v in pairs(t1) do
     if t2[i] ~= v then
       equal = false
       break;
@@ -61,7 +62,7 @@ local function RefreshConfig()
   x.GenerateColorOptions()
 
   -- Update combat text engine CVars
-  x.cvar_update( true )
+  x.cvar_update(true)
 
   collectgarbage()
 end
@@ -78,11 +79,11 @@ local function ProfileReset()
 end
 
 local function CheckExistingProfile()
-  local key = UnitName("player").." - "..GetRealmName()
+  local key = UnitName("player") .. " - " .. GetRealmName()
   return xCTSavedDB
-     and xCTSavedDB.profileKeys
-     and xCTSavedDB.profileKeys[key]
-     and xCTSavedDB.profiles[xCTSavedDB.profileKeys[key]]
+      and xCTSavedDB.profileKeys
+      and xCTSavedDB.profileKeys[key]
+      and xCTSavedDB.profiles[xCTSavedDB.profileKeys[key]]
 end
 
 -- Handle Addon Initialized
@@ -124,9 +125,9 @@ function x:OnInitialize()
 
   -- Delay updating frames until all other addons are loaded!
   --x:UpdateFrames()
-  if build < 70000 then
-    x:UpdateBlizzardFCT()
-  end
+  -- if build < 70000 then
+  --   x:UpdateBlizzardFCT()
+  -- end
 
   x:UpdateCombatTextEvents(true)
   x:UpdateSpamSpells()
@@ -158,11 +159,12 @@ frameUpdate:SetScript("OnEvent", function(self)
 end)
 
 -- Version Compare Helpers... Yeah!
-local function VersionToTable( version )
+local function VersionToTable(version)
   local major, minor, iteration, releaseMsg = string_match(string_lower(version), "(%d+)%.(%d+)%.(%d+)(.*)")
   major, minor, iteration = tonumber(major) or 0, tonumber(minor) or 0, tonumber(iteration) or 0
-  local isAlpha, isBeta =  string_find(releaseMsg, "alpha") and true or false, string_find(releaseMsg, "beta") and true or false
-  local t = { }
+  local isAlpha, isBeta = string_find(releaseMsg, "alpha") and true or false,
+      string_find(releaseMsg, "beta") and true or false
+  local t = {}
   t.major = major
   t.minor = minor
   t.iteration = iteration
@@ -176,16 +178,15 @@ local function VersionToTable( version )
   return t
 end
 
-local function CompareVersions( a, b, debug )
-
+local function CompareVersions(a, b, debug)
   if debug then
-  	print('First Build:')
-    for i,v in pairs(a) do
-      print('    '..i..' = '..tostring(v))
+    print('First Build:')
+    for i, v in pairs(a) do
+      print('    ' .. i .. ' = ' .. tostring(v))
     end
     print('Second Build:')
-    for i,v in pairs(b) do
-      print('    '..i..' = '..tostring(v))
+    for i, v in pairs(b) do
+      print('    ' .. i .. ' = ' .. tostring(v))
     end
   end
 
@@ -262,103 +263,104 @@ do
       print("|cffFF0000x|rCT|cffFFFF00+|r: |cffFF8000Clean Up - Migrated Settings|r")
       cleanUpShown = true
     end
-    print("    "..msg)
+    print("    " .. msg)
   end
 end
 
 -- This function was created as the central location for crappy code
-function x:CompatibilityLogic( existing )
-    local addonVersionString = C_AddOns.GetAddOnMetadata("xCT+", "Version")
-    local currentVersion = VersionToTable(addonVersionString)
-    local previousVersion = VersionToTable(self.db.profile.dbVersion or "4.3.0 Beta 2")
+function x:CompatibilityLogic(existing)
+  local addonVersionString = C_AddOns.GetAddOnMetadata("xCT+", "Version")
+  local currentVersion = VersionToTable(addonVersionString)
+  local previousVersion = VersionToTable(self.db.profile.dbVersion or "4.3.0 Beta 2")
 
-    if not currentVersion.devBuild and UnitName("player") == "Dandraffbal" then
-      currentVersion.devBuild = 1
+  if not currentVersion.devBuild and UnitName("player") == "Dandraffbal" then
+    currentVersion.devBuild = 1
+  end
+
+  if existing then
+    -- Pre-Legion Requires Complete Reset
+    if CompareVersions(VersionToTable("4.2.9"), previousVersion) > 0 then
+      StaticPopup_Show("XCT_PLUS_DB_CLEANUP_2")
+      return false -- Do not continue loading addon
     end
 
-    if existing then
-      -- Pre-Legion Requires Complete Reset
-      if CompareVersions( VersionToTable("4.2.9"), previousVersion) > 0 then
-        StaticPopup_Show("XCT_PLUS_DB_CLEANUP_2")
-        return false -- Do not continue loading addon
+    -- 4.3.0 Beta 3 -> Removes Spell School Colors from Outgoing fraame settings
+    if CompareVersions(VersionToTable("4.3.0 Beta 3"), previousVersion) > 0 then
+      if currentVersion.devBuild then
+        x.MigratePrint(
+          "|cff798BDDSpell School Colors|r (|cffFFFF00From: Config Tool->Frames->Outgoing|r | |cff00FF00To: Config Tool->Spell School Colors|r)")
       end
-
-      -- 4.3.0 Beta 3 -> Removes Spell School Colors from Outgoing fraame settings
-      if CompareVersions( VersionToTable("4.3.0 Beta 3"), previousVersion) > 0 then
-        if currentVersion.devBuild then
-          x.MigratePrint("|cff798BDDSpell School Colors|r (|cffFFFF00From: Config Tool->Frames->Outgoing|r | |cff00FF00To: Config Tool->Spell School Colors|r)")
-        end
-        if x.db.profile.frames.outgoing.colors.spellSchools then
-          local oldDB = x.db.profile.frames.outgoing.colors.spellSchools.colors
-          local newDB = x.db.profile.SpellColors
-          local keys = {
-            ['SpellSchool_Physical'] = "1",
-            ['SpellSchool_Holy']     = "2",
-            ['SpellSchool_Fire']     = "4",
-            ['SpellSchool_Nature']   = "8",
-            ['SpellSchool_Frost']    = "16",
-            ['SpellSchool_Shadow']   = "32",
-            ['SpellSchool_Arcane']   = "64",
-          }
-          for oldKey, newKey in pairs(keys) do
-            if oldDB[oldKey] then
-              newDB[newKey].enabled = oldDB[oldKey].enabled
-              newDB[newKey].color = oldDB[oldKey].color
-            end
-          end
-          x.db.profile.frames.outgoing.colors.spellSchools = nil
-        end
-      end
-
-
-      -- 4.3.0 Beta 4 -> Remove redundent Merge Entries from the Config
-      if CompareVersions( VersionToTable("4.3.0 Beta 5"), previousVersion) > 0 then
-        if currentVersion.devBuild then
-          x.MigratePrint("|cff798BDDMerge Entries:|r (|cffFFFF00Optimizing SavedVars|r)")
-        end
-        local merge = x.db.profile.spells.merge
-        for id, entry in pairs(merge) do
-          merge[id] = nil
-          if not entry.enabled and addon.merges[id] then
-            merge[id] = { enabled = false }
+      if x.db.profile.frames.outgoing.colors.spellSchools then
+        local oldDB = x.db.profile.frames.outgoing.colors.spellSchools.colors
+        local newDB = x.db.profile.SpellColors
+        local keys = {
+          ['SpellSchool_Physical'] = "1",
+          ['SpellSchool_Holy']     = "2",
+          ['SpellSchool_Fire']     = "4",
+          ['SpellSchool_Nature']   = "8",
+          ['SpellSchool_Frost']    = "16",
+          ['SpellSchool_Shadow']   = "32",
+          ['SpellSchool_Arcane']   = "64",
+        }
+        for oldKey, newKey in pairs(keys) do
+          if oldDB[oldKey] then
+            newDB[newKey].enabled = oldDB[oldKey].enabled
+            newDB[newKey].color = oldDB[oldKey].color
           end
         end
+        x.db.profile.frames.outgoing.colors.spellSchools = nil
       end
-
-      -- Clean up colors names in the database
-      if CompareVersions( VersionToTable("4.3.3 Beta 1"), previousVersion) > 0 then
-        if currentVersion.devBuild then --currentVersion.devBuild then
-          x.MigratePrint("|cff798BDDCustom Colors|r (|cffFFFF00From: Config Tool->Frames-> All Frames ->Colors|r) Removing old options.")
-        end
-        for name, settings in pairs(x.db.profile.frames) do
-          if settings.colors then
-            for exists in pairs(settings.colors) do
-              if addon.defaults.profile.frames[name] and not addon.defaults.profile.frames[name].colors[exists] then
-                settings.colors[exists] = nil
-              end
-            end
-          end
-        end
-      end
-
-      -- Clean up class frame from database
-      if CompareVersions( VersionToTable("4.5.1-beta5"), previousVersion ) > 0 then
-        if currentVersion.devBuild then --currentVersion.devBuild then
-          x.MigratePrint("|cffFFFF00Cleaning Frame DB (Removing Class)|r")
-        end
-        self.db.profile.frames.class = nil
-      end
-
-    else
-      -- Created New: Dont need to do anything right now
     end
-    self.db.profile.dbVersion = addonVersionString
 
-    return true
+
+    -- 4.3.0 Beta 4 -> Remove redundent Merge Entries from the Config
+    if CompareVersions(VersionToTable("4.3.0 Beta 5"), previousVersion) > 0 then
+      if currentVersion.devBuild then
+        x.MigratePrint("|cff798BDDMerge Entries:|r (|cffFFFF00Optimizing SavedVars|r)")
+      end
+      local merge = x.db.profile.spells.merge
+      for id, entry in pairs(merge) do
+        merge[id] = nil
+        if not entry.enabled and addon.merges[id] then
+          merge[id] = { enabled = false }
+        end
+      end
+    end
+
+    -- Clean up colors names in the database
+    if CompareVersions(VersionToTable("4.3.3 Beta 1"), previousVersion) > 0 then
+      if currentVersion.devBuild then --currentVersion.devBuild then
+        x.MigratePrint(
+          "|cff798BDDCustom Colors|r (|cffFFFF00From: Config Tool->Frames-> All Frames ->Colors|r) Removing old options.")
+      end
+      for name, settings in pairs(x.db.profile.frames) do
+        if settings.colors then
+          for exists in pairs(settings.colors) do
+            if addon.defaults.profile.frames[name] and not addon.defaults.profile.frames[name].colors[exists] then
+              settings.colors[exists] = nil
+            end
+          end
+        end
+      end
+    end
+
+    -- Clean up class frame from database
+    if CompareVersions(VersionToTable("4.5.1-beta5"), previousVersion) > 0 then
+      if currentVersion.devBuild then --currentVersion.devBuild then
+        x.MigratePrint("|cffFFFF00Cleaning Frame DB (Removing Class)|r")
+      end
+      self.db.profile.frames.class = nil
+    end
+  else
+    -- Created New: Dont need to do anything right now
+  end
+  self.db.profile.dbVersion = addonVersionString
+
+  return true
 end
 
 function x.CleanUpForLegion()
-  local key = xCTSavedDB.profileKeys[UnitName("player").." - "..GetRealmName()]
+  local key = xCTSavedDB.profileKeys[UnitName("player") .. " - " .. GetRealmName()]
   xCTSavedDB.profiles[key] = {}
   ReloadUI()
 end
@@ -368,8 +370,8 @@ do
   local tooltip = CreateFrame('GameTooltip', 'xCT_SpellDescriptionTooltip', nil, 'GameTooltipTemplate')
   tooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
 
-  local Descriptions, description = { }, nil
-  
+  local Descriptions, description = {}, nil
+
   function getSpellDescription(spellId)
     if Descriptions[spellId] then
       return Descriptions[spellId]
@@ -377,10 +379,10 @@ do
 
     tooltip:ClearLines()
     tooltip:SetSpellByID(spellId)
-    
+
     local font
-    for i=4,1,-1 do
-      font = _G['xCT_SpellDescriptionTooltipTextLeft'..i]
+    for i = 4, 1, -1 do
+      font = _G['xCT_SpellDescriptionTooltipTextLeft' .. i]
       if font then
         break
       end
@@ -413,90 +415,88 @@ end
 
 local CLASS_NAMES = {
   ["DEATHKNIGHT"] = {
-    [0]   = 0,   -- All Specs
-    [250] = 1,   -- Blood
-    [251] = 2,   -- Frost
-    [252] = 3,   -- Unholy
+    [0]   = 0, -- All Specs
+    [250] = 1, -- Blood
+    [251] = 2, -- Frost
+    [252] = 3, -- Unholy
   },
   ["DEMONHUNTER"] = {
-    [0]   = 0,   -- All Specs
-    [577] = 1,   -- Havoc
-    [581] = 2,   -- Vengeance
+    [0]   = 0, -- All Specs
+    [577] = 1, -- Havoc
+    [581] = 2, -- Vengeance
   },
   ["DRUID"] = {
-    [0]   = 0,   -- All Specs
-    [102] = 1,   -- Balance
-    [103] = 2,   -- Feral
-    [104] = 3,   -- Guardian
-    [105] = 4,   -- Restoration
+    [0]   = 0, -- All Specs
+    [102] = 1, -- Balance
+    [103] = 2, -- Feral
+    [104] = 3, -- Guardian
+    [105] = 4, -- Restoration
   },
   ["EVOKER"] = {
-    [0]  = 0,    -- All Specs
-    [1467] = 1,  -- Devastation
-    [1468] = 2,  -- Preservation
-    [1473] = 3,  -- Augmentation
+    [0]    = 0, -- All Specs
+    [1467] = 1, -- Devastation
+    [1468] = 2, -- Preservation
+    [1473] = 3, -- Augmentation
   },
   ["HUNTER"] = {
-    [0]   = 0,   -- All Specs
-    [253] = 1,   -- Beast Mastery
-    [254] = 2,   -- Marksmanship
-    [255] = 3,   -- Survival
+    [0]   = 0, -- All Specs
+    [253] = 1, -- Beast Mastery
+    [254] = 2, -- Marksmanship
+    [255] = 3, -- Survival
   },
   ["MAGE"] = {
-    [0]  = 0,    -- All Specs
-    [62] = 1,    -- Arcane
-    [63] = 2,    -- Fire
-    [64] = 3,    -- Frost
+    [0]  = 0, -- All Specs
+    [62] = 1, -- Arcane
+    [63] = 2, -- Fire
+    [64] = 3, -- Frost
   },
   ["MONK"] = {
-    [0]   = 0,   -- All Specs
-    [268] = 1,   -- Brewmaster
-    [269] = 2,   -- Windwalker
-    [270] = 3,   -- Mistweaver
+    [0]   = 0, -- All Specs
+    [268] = 1, -- Brewmaster
+    [269] = 2, -- Windwalker
+    [270] = 3, -- Mistweaver
   },
   ["PALADIN"] = {
-    [0]  = 0,    -- All Specs
-    [65] = 1,    -- Holy
-    [66] = 2,    -- Protection
-    [70] = 3,    -- Retribution
+    [0]  = 0, -- All Specs
+    [65] = 1, -- Holy
+    [66] = 2, -- Protection
+    [70] = 3, -- Retribution
   },
   ["PRIEST"] = {
-    [0]   = 0,   -- All Specs
-    [256] = 1,   -- Discipline
-    [257] = 2,   -- Holy
-    [258] = 3,   -- Shadow
+    [0]   = 0, -- All Specs
+    [256] = 1, -- Discipline
+    [257] = 2, -- Holy
+    [258] = 3, -- Shadow
   },
   ["ROGUE"] = {
-    [0]   = 0,   -- All Specs
-    [259] = 1,   -- Assassination
-    [260] = 2,   -- Combat
-    [261] = 3,   -- Subtlety
+    [0]   = 0, -- All Specs
+    [259] = 1, -- Assassination
+    [260] = 2, -- Combat
+    [261] = 3, -- Subtlety
   },
   ["SHAMAN"] = {
-    [0]   = 0,   -- All Specs
-    [262] = 1,   -- Elemental
-    [263] = 2,   -- Enhancement
-    [264] = 3,   -- Restoration
+    [0]   = 0, -- All Specs
+    [262] = 1, -- Elemental
+    [263] = 2, -- Enhancement
+    [264] = 3, -- Restoration
   },
   ["WARLOCK"] = {
-    [0]   = 0,   -- All Specs
-    [265] = 1,   -- Affliction
-    [266] = 2,   -- Demonology
-    [267] = 3,   -- Destruction
+    [0]   = 0, -- All Specs
+    [265] = 1, -- Affliction
+    [266] = 2, -- Demonology
+    [267] = 3, -- Destruction
   },
   ["WARRIOR"] = {
-    [0]  = 0,    -- All Specs
-    [71] = 1,    -- Arms
-    [72] = 2,    -- Fury
-    [73] = 3,    -- Protection
+    [0]  = 0, -- All Specs
+    [71] = 1, -- Arms
+    [72] = 2, -- Fury
+    [73] = 3, -- Protection
   },
 }
 
 function x.GenerateDefaultSpamSpells()
   local defaults = addon.defaults.spells.merge
-
 end
-
 
 local function cleanColors(colorTable)
   for index, color in pairs(colorTable) do
@@ -536,7 +536,7 @@ function x:UpdateSpamSpells()
   local spells = addon.options.args.spells.args.classList.args
   local global = addon.options.args.spells.args.globalList.args
   local racetab = addon.options.args.spells.args.raceList.args
-  
+
   -- Clear out the old spells
   for class, specs in pairs(CLASS_NAMES) do
     spells[class].args = {}
@@ -545,7 +545,7 @@ function x:UpdateSpamSpells()
       --if index ~= 0 then
       --  _, name = GetSpecializationInfoByID(spec)
       --end
-      spells[class].args["specHeader"..index] = {
+      spells[class].args["specHeader" .. index] = {
         type = 'header',
         order = index * 2,
         name = name,
@@ -561,7 +561,6 @@ function x:UpdateSpamSpells()
   -- Create a list of the categories (to be sorted)
   local categories = {}
   for _, entry in pairs(addon.merges) do
-
     --TODO better code when i understand more the code
 
     if not CLASS_NAMES[entry.class] and entry.desc ~= "Racial Spell" then
@@ -581,15 +580,15 @@ function x:UpdateSpamSpells()
     global[category] = {
       type = 'description',
       order = currentIndex,
-      name = "\n"..category,
+      name = "\n" .. category,
       fontSize = 'large',
     }
     categoryOffsets[category] = currentIndex + 1
   end
 
-------------------------------------------------------
--- Clear out the old spells (racetab)
--- Dirty add have to reform when better understanding the code
+  ------------------------------------------------------
+  -- Clear out the old spells (racetab)
+  -- Dirty add have to reform when better understanding the code
   for index in pairs(racetab) do
     racetab[index] = nil
   end
@@ -615,12 +614,12 @@ function x:UpdateSpamSpells()
     racetab[rcategory] = {
       type = 'description',
       order = rcurrentIndex,
-      name = "\n"..rcategory,
+      name = "\n" .. rcategory,
       fontSize = 'large',
     }
     rcategoryOffsets[rcategory] = rcurrentIndex + 1
   end
-------------------------------------------------------
+  ------------------------------------------------------
 
 
 
@@ -629,10 +628,9 @@ function x:UpdateSpamSpells()
   for spellID, entry in pairs(addon.merges) do
     local name = C_Spell.GetSpellName(spellID)
     if name then
-    
-    --TODO better code when i understand more the code
+      --TODO better code when i understand more the code
       -- Create a useful description for the spell
-      local spellDesc = getSpellDescription(spellID) or "No Description"    
+      local spellDesc = getSpellDescription(spellID) or "No Description"
       local desc = ""
       if entry.desc and not CLASS_NAMES[entry.class] then
         desc = "|cff9F3ED5" .. entry.desc .. "|r\n\n"
@@ -643,7 +641,7 @@ function x:UpdateSpamSpells()
       else
         desc = desc .. "\n|cffFF0000Interval|r Merge every |cffFFFF00" .. tostring(entry.interval) .. "|r seconds"
       end
-    
+
       -- Add the spell to the UI
       if CLASS_NAMES[entry.class] then
         local index = CLASS_NAMES[entry.class][tonumber(entry.desc) or 0]
@@ -655,8 +653,8 @@ function x:UpdateSpamSpells()
           get = SpamSpellGet,
           set = SpamSpellSet,
         }
-    elseif entry.desc == "Racial Spell" then
-      racetab[tostring(spellID)] = {
+      elseif entry.desc == "Racial Spell" then
+        racetab[tostring(spellID)] = {
           order = rcategoryOffsets[entry.class],
           type = 'toggle',
           name = name,
@@ -678,13 +676,12 @@ function x:UpdateSpamSpells()
       end
     end
   end
-
 end
 
 local function ItemToggleAll(info)
   local state = (info[#info] == "disableAll")
-  for key in pairs(x.db.profile.spells.items[info[#info-1]]) do
-    x.db.profile.spells.items[info[#info-1]][key] = state
+  for key in pairs(x.db.profile.spells.items[info[#info - 1]]) do
+    x.db.profile.spells.items[info[#info - 1]][key] = state
   end
 end
 
@@ -728,7 +725,7 @@ local function setIF_2(info, value) x.db.profile.spells.items[info[#info - 1]][i
   end
 end]]
 
-x.UpdateItemTypes = function(self)end
+x.UpdateItemTypes = function(self) end
 
 
 --[===[
@@ -864,9 +861,9 @@ local function setCP_2(info, value)
     end
   end
 
-  if tonumber(index) then   -- it is a spell ID
+  if tonumber(index) then -- it is a spell ID
     x.db.profile.spells.combo[x.player.class][tonumber(spec)][tonumber(index)].enabled = value
-  else                      -- it is a unit's power
+  else                    -- it is a unit's power
     x.db.profile.spells.combo[x.player.class][tonumber(spec)][index] = value
   end
 
@@ -924,17 +921,17 @@ function x:UpdateComboPointOptions(force)
   -- Add the each spec
   for spec in ipairs(x.db.profile.spells.combo[myClass]) do
     local haveSpec = false
-    for index, entry in pairs(x.db.profile.spells.combo[myClass][spec] or { }) do
+    for index, entry in pairs(x.db.profile.spells.combo[myClass][spec] or {}) do
       if not haveSpec then
         haveSpec = true
         local mySpecName = select(2, GetSpecializationInfo(spec)) or "Tree " .. spec
 
         comboSpells.args["title" .. tostring(spec)] = {
-            order = offset,
-            type = 'header',
-            name = "Specialization: |cff798BDD" .. mySpecName .. "|r",
-            width = "full",
-          }
+          order = offset,
+          type = 'header',
+          name = "Specialization: |cff798BDD" .. mySpecName .. "|r",
+          width = "full",
+        }
         offset = offset + 1
       end
 
@@ -975,7 +972,7 @@ function x:UpdateComboTracker()
   local myClass, mySpec = x.player.class, x.player.spec
   x.TrackingEntry = nil
 
-  if not mySpec or mySpec < 1 or mySpec > 4 then return end  -- under Level 10 return 5
+  if not mySpec or mySpec < 1 or mySpec > 4 then return end -- under Level 10 return 5
 
   for i, entry in pairs(x.db.profile.spells.combo[myClass][mySpec]) do
     if type(entry) == "table" and entry.enabled then
@@ -988,9 +985,9 @@ end
 
 -- Get and set methods for the spell filter
 local function getSF(info)
-  return x.db.profile.spellFilter[info[#info-2]][info[#info]]
+  return x.db.profile.spellFilter[info[#info - 2]][info[#info]]
 end
-local function setSF(info, value) x.db.profile.spellFilter[info[#info-2]][info[#info]] = value end
+local function setSF(info, value) x.db.profile.spellFilter[info[#info - 2]][info[#info]] = value end
 
 -- Update the Buff, Debuff and Spell filter list
 function x:UpdateAuraSpellFilter(specific)
@@ -1003,7 +1000,7 @@ function x:UpdateAuraSpellFilter(specific)
       type = 'group',
       guiInline = true,
       order = 11,
-      args = { },
+      args = {},
     }
 
     local buffs = addon.options.args.spellFilter.args.listBuffs.args.list.args
@@ -1038,7 +1035,7 @@ function x:UpdateAuraSpellFilter(specific)
       type = 'group',
       guiInline = true,
       order = 11,
-      args = { },
+      args = {},
     }
 
     local debuffs = addon.options.args.spellFilter.args.listDebuffs.args.list.args
@@ -1073,7 +1070,7 @@ function x:UpdateAuraSpellFilter(specific)
       type = 'group',
       guiInline = true,
       order = 11,
-      args = { },
+      args = {},
     }
 
     local procs = addon.options.args.spellFilter.args.listProcs.args.list.args
@@ -1107,7 +1104,7 @@ function x:UpdateAuraSpellFilter(specific)
       type = 'group',
       guiInline = true,
       order = 11,
-      args = { },
+      args = {},
     }
 
     local spells = addon.options.args.spellFilter.args.listSpells.args.list.args
@@ -1148,7 +1145,7 @@ function x:UpdateAuraSpellFilter(specific)
       type = 'group',
       guiInline = true,
       order = 11,
-      args = { },
+      args = {},
     }
 
     local spells = addon.options.args.spellFilter.args.listItems.args.list.args
@@ -1186,7 +1183,7 @@ function x:UpdateAuraSpellFilter(specific)
       type = 'group',
       guiInline = true,
       order = 11,
-      args = { },
+      args = {},
     }
 
     local spells = addon.options.args.spellFilter.args.listDamage.args.list.args
@@ -1226,7 +1223,7 @@ function x:UpdateAuraSpellFilter(specific)
       type = 'group',
       guiInline = true,
       order = 11,
-      args = { },
+      args = {},
     }
 
     local spells = addon.options.args.spellFilter.args.listHealing.args.list.args
@@ -1258,7 +1255,6 @@ function x:UpdateAuraSpellFilter(specific)
       }
     end
   end
-
 end
 
 -- Add and remove Buffs, debuffs, and spells from the filter
@@ -1327,7 +1323,7 @@ function x.RemoveFilteredSpell(name, category)
   end
 end
 
-local colorNameDB = { }
+local colorNameDB = {}
 
 -- Returns the color and if it was enabled
 function x.LookupColorByName(name)
@@ -1345,25 +1341,30 @@ local getColorDB = function(info)
   local enabled = string_match(info[#info], "(.*)_enabled")
   local color = string_match(info[#info], "(.*)_color")
 
-  if info[#info-1] == 'fontColors' then
+  if info[#info - 1] == 'fontColors' then
     if enabled then
-      return x.db.profile.frames[info[#info-2]].colors[enabled].enabled
+      return x.db.profile.frames[info[#info - 2]].colors[enabled].enabled
     elseif color then
-      return unpack(x.db.profile.frames[info[#info-2]].colors[color].color or x.db.profile.frames[info[#info-2]].colors[color].default)
+      return unpack(x.db.profile.frames[info[#info - 2]].colors[color].color or
+        x.db.profile.frames[info[#info - 2]].colors[color].default)
     end
-  elseif info[#info-2] == 'fontColors' then
+  elseif info[#info - 2] == 'fontColors' then
     if enabled then
-      return x.db.profile.frames[info[#info-3]].colors[info[#info-1]].colors[enabled].enabled
+      return x.db.profile.frames[info[#info - 3]].colors[info[#info - 1]].colors[enabled].enabled
     elseif color then
-      return unpack(x.db.profile.frames[info[#info-3]].colors[info[#info-1]].colors[color].color or x.db.profile.frames[info[#info-3]].colors[info[#info-1]].colors[color].default)
+      return unpack(x.db.profile.frames[info[#info - 3]].colors[info[#info - 1]].colors[color].color or
+        x.db.profile.frames[info[#info - 3]].colors[info[#info - 1]].colors[color].default)
     end
-  elseif info[#info-3] == 'fontColors' then
+  elseif info[#info - 3] == 'fontColors' then
     if enabled then
-      return x.db.profile.frames[info[#info-4]].colors[info[#info-2]].colors[info[#info-1]].colors[enabled].enabled
+      return x.db.profile.frames[info[#info - 4]].colors[info[#info - 2]].colors[info[#info - 1]].colors[enabled]
+          .enabled
     elseif color then
-      return unpack(x.db.profile.frames[info[#info-4]].colors[info[#info-2]].colors[info[#info-1]].colors[color].color or x.db.profile.frames[info[#info-4]].colors[info[#info-2]].colors[info[#info-1]].colors[color].default)
+      return unpack(x.db.profile.frames[info[#info - 4]].colors[info[#info - 2]].colors[info[#info - 1]].colors[color]
+        .color or x.db.profile.frames[info[#info - 4]].colors[info[#info - 2]].colors[info[#info - 1]].colors[color]
+        .default)
     end
-  elseif info[#info-1] == 'SpellSchools' then
+  elseif info[#info - 1] == 'SpellSchools' then
     if enabled then
       return x.db.profile.SpellColors[enabled].enabled
     elseif color then
@@ -1375,25 +1376,26 @@ end
 local setColorDB = function(info, r, g, b)
   local enabled = string_match(info[#info], "(.*)_enabled")
   local color = string_match(info[#info], "(.*)_color")
-  if info[#info-1] == 'fontColors' then
+  if info[#info - 1] == 'fontColors' then
     if enabled then
-      x.db.profile.frames[info[#info-2]].colors[enabled].enabled = r
+      x.db.profile.frames[info[#info - 2]].colors[enabled].enabled = r
     elseif color then
-      x.db.profile.frames[info[#info-2]].colors[color].color = { r, g, b }
+      x.db.profile.frames[info[#info - 2]].colors[color].color = { r, g, b }
     end
-  elseif info[#info-2] == 'fontColors' then
+  elseif info[#info - 2] == 'fontColors' then
     if enabled then
-      x.db.profile.frames[info[#info-3]].colors[info[#info-1]].colors[enabled].enabled = r
+      x.db.profile.frames[info[#info - 3]].colors[info[#info - 1]].colors[enabled].enabled = r
     elseif color then
-      x.db.profile.frames[info[#info-3]].colors[info[#info-1]].colors[color].color = { r, g, b }
+      x.db.profile.frames[info[#info - 3]].colors[info[#info - 1]].colors[color].color = { r, g, b }
     end
-  elseif info[#info-3] == 'fontColors' then
+  elseif info[#info - 3] == 'fontColors' then
     if enabled then
-      x.db.profile.frames[info[#info-4]].colors[info[#info-2]].colors[info[#info-1]].colors[enabled].enabled = r
+      x.db.profile.frames[info[#info - 4]].colors[info[#info - 2]].colors[info[#info - 1]].colors[enabled].enabled = r
     elseif color then
-      x.db.profile.frames[info[#info-4]].colors[info[#info-2]].colors[info[#info-1]].colors[color].color = { r, g, b }
+      x.db.profile.frames[info[#info - 4]].colors[info[#info - 2]].colors[info[#info - 1]].colors[color].color = { r, g,
+        b }
     end
-  elseif info[#info-1] == 'SpellSchools' then
+  elseif info[#info - 1] == 'SpellSchools' then
     if enabled then
       x.db.profile.SpellColors[enabled].enabled = r
     elseif color then
@@ -1404,54 +1406,63 @@ end
 
 local funcColorReset = function(info)
   local color = string_match(info[#info], "(.*)_reset")
-  if info[#info-1] == 'fontColors' then
-    x.db.profile.frames[info[#info-2]].colors[color].color = x.db.profile.frames[info[#info-2]].colors[color].default
-  elseif info[#info-2] == 'fontColors' then
-    x.db.profile.frames[info[#info-3]].colors[info[#info-1]].colors[color].color = x.db.profile.frames[info[#info-3]].colors[info[#info-1]].colors[color].default
-  elseif info[#info-3] == 'fontColors' then
-    x.db.profile.frames[info[#info-4]].colors[info[#info-2]].colors[info[#info-1]].colors[color].color = x.db.profile.frames[info[#info-4]].colors[info[#info-2]].colors[info[#info-1]].colors[color].default
-  elseif info[#info-1] == 'SpellSchools' then
+  if info[#info - 1] == 'fontColors' then
+    x.db.profile.frames[info[#info - 2]].colors[color].color = x.db.profile.frames[info[#info - 2]].colors[color]
+        .default
+  elseif info[#info - 2] == 'fontColors' then
+    x.db.profile.frames[info[#info - 3]].colors[info[#info - 1]].colors[color].color = x.db.profile.frames
+        [info[#info - 3]].colors[info[#info - 1]].colors[color].default
+  elseif info[#info - 3] == 'fontColors' then
+    x.db.profile.frames[info[#info - 4]].colors[info[#info - 2]].colors[info[#info - 1]].colors[color].color = x.db
+        .profile.frames[info[#info - 4]].colors[info[#info - 2]].colors[info[#info - 1]].colors[color].default
+  elseif info[#info - 1] == 'SpellSchools' then
     x.db.profile.SpellColors[color].color = x.db.profile.SpellColors[color].default
   end
 end
 
 local funcColorHidden = function(info)
   local color = string_match(info[#info], "(.*)_color")
-  if info[#info-1] == 'fontColors' then
-    return not x.db.profile.frames[info[#info-2]].colors[color].enabled
-  elseif info[#info-2] == 'fontColors' then
-    return not x.db.profile.frames[info[#info-3]].colors[info[#info-1]].colors[color].enabled
-  elseif info[#info-3] == 'fontColors' then
-    return not x.db.profile.frames[info[#info-4]].colors[info[#info-2]].colors[info[#info-1]].colors[color].enabled
-  elseif info[#info-1] == 'SpellSchools' then
+  if info[#info - 1] == 'fontColors' then
+    return not x.db.profile.frames[info[#info - 2]].colors[color].enabled
+  elseif info[#info - 2] == 'fontColors' then
+    return not x.db.profile.frames[info[#info - 3]].colors[info[#info - 1]].colors[color].enabled
+  elseif info[#info - 3] == 'fontColors' then
+    return not x.db.profile.frames[info[#info - 4]].colors[info[#info - 2]].colors[info[#info - 1]].colors[color]
+        .enabled
+  elseif info[#info - 1] == 'SpellSchools' then
     return not x.db.profile.SpellColors[color].enabled
   end
 end
 
 local funcColorResetHidden = function(info)
   local color = string_match(info[#info], "(.*)_reset")
-  if info[#info-1] == 'fontColors' then
-    return not x.db.profile.frames[info[#info-2]].colors[color].enabled or
-      tableCompare(x.db.profile.frames[info[#info-2]].colors[color].color, x.db.profile.frames[info[#info-2]].colors[color].default)
-  elseif info[#info-2] == 'fontColors' then
-    return not x.db.profile.frames[info[#info-3]].colors[info[#info-1]].colors[color].enabled or
-      tableCompare(x.db.profile.frames[info[#info-3]].colors[info[#info-1]].colors[color].color, x.db.profile.frames[info[#info-3]].colors[info[#info-1]].colors[color].default)
-  elseif info[#info-3] == 'fontColors' then
-    return not x.db.profile.frames[info[#info-4]].colors[info[#info-2]].colors[info[#info-1]].colors[color].enabled or
-      tableCompare(x.db.profile.frames[info[#info-4]].colors[info[#info-2]].colors[info[#info-1]].colors[color].color, x.db.profile.frames[info[#info-4]].colors[info[#info-2]].colors[info[#info-1]].colors[color].default)
-  elseif info[#info-1] == 'SpellSchools' then
+  if info[#info - 1] == 'fontColors' then
+    return not x.db.profile.frames[info[#info - 2]].colors[color].enabled or
+        tableCompare(x.db.profile.frames[info[#info - 2]].colors[color].color,
+          x.db.profile.frames[info[#info - 2]].colors[color].default)
+  elseif info[#info - 2] == 'fontColors' then
+    return not x.db.profile.frames[info[#info - 3]].colors[info[#info - 1]].colors[color].enabled or
+        tableCompare(x.db.profile.frames[info[#info - 3]].colors[info[#info - 1]].colors[color].color,
+          x.db.profile.frames[info[#info - 3]].colors[info[#info - 1]].colors[color].default)
+  elseif info[#info - 3] == 'fontColors' then
+    return not x.db.profile.frames[info[#info - 4]].colors[info[#info - 2]].colors[info[#info - 1]].colors[color]
+        .enabled or
+        tableCompare(x.db.profile.frames[info[#info - 4]].colors[info[#info - 2]].colors[info[#info - 1]].colors[color]
+          .color, x.db.profile.frames[info[#info - 4]].colors[info[#info - 2]].colors[info[#info - 1]].colors[color]
+          .default)
+  elseif info[#info - 1] == 'SpellSchools' then
     return not x.db.profile.SpellColors[color].enabled or
-      tableCompare(x.db.profile.SpellColors[color].color, x.db.profile.SpellColors[color].default)
+        tableCompare(x.db.profile.SpellColors[color].color, x.db.profile.SpellColors[color].default)
   end
 end
 
 local funcColorDisabled = function(info)
-  if info[#info-1] == 'fontColors' then
-    return x.db.profile.frames[info[#info-2]].customColor
-  elseif info[#info-2] == 'fontColors' then
-    return x.db.profile.frames[info[#info-3]].customColor
-  elseif info[#info-3] == 'fontColors' then
-    return x.db.profile.frames[info[#info-4]].customColor
+  if info[#info - 1] == 'fontColors' then
+    return x.db.profile.frames[info[#info - 2]].customColor
+  elseif info[#info - 2] == 'fontColors' then
+    return x.db.profile.frames[info[#info - 3]].customColor
+  elseif info[#info - 3] == 'fontColors' then
+    return x.db.profile.frames[info[#info - 4]].customColor
   end
 end
 
@@ -1467,36 +1478,36 @@ local function GenerateColorOptionsTable_Entry(colorName, settings, options, ind
 
   -- Cache this color into a quick lookup
   colorNameDB[colorName] = settings
-  options[colorName.."_enabled"] = {
+  options[colorName .. "_enabled"] = {
     order = index,
     type = 'toggle',
     name = settings.desc,
     get = getColorDB,
     set = setColorDB,
-    desc = "Enable a custom color for |cff798BDD"..settings.desc.."|r.",
+    desc = "Enable a custom color for |cff798BDD" .. settings.desc .. "|r.",
     disabled = funcColorDisabled,
   }
-  options[colorName.."_color"] = {
+  options[colorName .. "_color"] = {
     order = index + 1,
     type = 'color',
     name = "Color",
     get = getColorDB,
     set = setColorDB,
-    desc = "Change the color for |cff798BDD"..settings.desc.."|r.",
+    desc = "Change the color for |cff798BDD" .. settings.desc .. "|r.",
     hidden = funcColorHidden,
     disabled = funcColorDisabled,
   }
-  options[colorName.."_reset"] = {
+  options[colorName .. "_reset"] = {
     type = 'execute',
     order = index + 2,
     name = "Reset",
     width = 'half',
     func = funcColorReset,
-    desc = "Resets |cff798BDD"..settings.desc.."|r back to the default color.",
+    desc = "Resets |cff798BDD" .. settings.desc .. "|r back to the default color.",
     hidden = funcColorResetHidden,
     disabled = funcColorDisabled,
   }
-  options["spacer"..index] = {
+  options["spacer" .. index] = {
     order = index + 3,
     type = 'description',
     fontSize = 'small',
@@ -1519,12 +1530,12 @@ local function GenerateColorOptionsTable(colorName, settings, options, index)
       type = 'group',
       guiInline = true,
       name = settings.desc,
-      args = { },
+      args = {},
     }
     index = index + 1
 
     -- Sort the Colors Alphabetical
-    local sortedList = { }
+    local sortedList = {}
     for colorName in pairs(settings.colors) do
       table_insert(sortedList, colorName)
     end
@@ -1553,7 +1564,7 @@ function x.GenerateColorOptions()
       local index = 10
 
       -- Sort the Colors Alphabetical
-      local sortedList = { }
+      local sortedList = {}
       for colorName in pairs(settings.colors) do
         table_insert(sortedList, colorName)
       end
@@ -1585,7 +1596,7 @@ function x.GenerateSpellSchoolColors()
   local settings = x.db.profile.SpellColors
   local index = 10
 
-  local sortedList = { }
+  local sortedList = {}
   for n in pairs(settings) do
     sortedList[#sortedList + 1] = tonumber(n)
   end
@@ -1601,15 +1612,39 @@ function x.GenerateSpellSchoolColors()
 end
 
 do
-  local cache = { [1] = "1", [2] = "2", [3] = "3",
-    [4] = "4", [5] = "5", [6] = "6", [8] = "8",
-    [9] = "9", [10] = "10", [12] = "12", [16] = "16",
-    [17] = "17", [18] = "18", [20] = "20",
-    [24] = "24", [28] = "28", [32] = "32", [33] = "33",
-    [34] = "34", [36] = "36", [40] = "40", [48] = "48",
-    [64] = "64", [65] = "65", [66] = "66", [68] = "68",
-    [72] = "72", [80] = "80", [96] = "96", [124] = "124",
-    [126] = "126", [127] = "127"
+  local cache = {
+    [1] = "1",
+    [2] = "2",
+    [3] = "3",
+    [4] = "4",
+    [5] = "5",
+    [6] = "6",
+    [8] = "8",
+    [9] = "9",
+    [10] = "10",
+    [12] = "12",
+    [16] = "16",
+    [17] = "17",
+    [18] = "18",
+    [20] = "20",
+    [24] = "24",
+    [28] = "28",
+    [32] = "32",
+    [33] = "33",
+    [34] = "34",
+    [36] = "36",
+    [40] = "40",
+    [48] = "48",
+    [64] = "64",
+    [65] = "65",
+    [66] = "66",
+    [68] = "68",
+    [72] = "72",
+    [80] = "80",
+    [96] = "96",
+    [124] = "124",
+    [126] = "126",
+    [127] = "127"
   }
 
   function x.GetSpellSchoolColor(spellSchool, override)
@@ -1628,7 +1663,7 @@ end
 
 -- Add LibSink Support
 do
-  local frames, color, LibSink = {}, {}, LibStub"LibSink-2.0"
+  local frames, color, LibSink = {}, {}, LibStub "LibSink-2.0"
 
   for name, title in pairs(x.FrameTitles) do
     if name ~= 'class' then
@@ -1637,16 +1672,19 @@ do
   end
 
   -- shortName, name, desc, func, scrollAreaFunc, hasSticky
-  LibSink:RegisterSink("xCT_Plus", "xCT+", "Created for optimal performance in the toughest fights, this rugged combat text add-on is ready to be put to the test!",
+  LibSink:RegisterSink("xCT_Plus", "xCT+",
+    "Created for optimal performance in the toughest fights, this rugged combat text add-on is ready to be put to the test!",
 
     -- The Sink Function
     function(addon, text, r, g, b, font, size, outline, sticky, location, icon)
       local settings = x.db.profile.frames[location or "general"]
       if settings.iconsEnabled and icon then
         if settings.fontJustify == "LEFT" then
-          text = string_format("%s %s", string_format(" |T%s:%d:%d:0:0:64:64:5:59:5:59|t", icon, settings.iconSize, settings.iconSize), text)
+          text = string_format("%s %s",
+            string_format(" |T%s:%d:%d:0:0:64:64:5:59:5:59|t", icon, settings.iconSize, settings.iconSize), text)
         else
-          text = string_format("%s%s", text, string_format(" |T%s:%d:%d:0:0:64:64:5:59:5:59|t", icon, settings.iconSize, settings.iconSize))
+          text = string_format("%s%s", text,
+            string_format(" |T%s:%d:%d:0:0:64:64:5:59:5:59|t", icon, settings.iconSize, settings.iconSize))
         end
       end
       color[1] = r; color[2] = g; color[3] = b
@@ -1654,7 +1692,7 @@ do
     end,
 
     -- List Active Scrolling Areas
-    function ()
+    function()
       local tmp = {}
       for name in pairs(frames) do
         table_insert(tmp, name)
@@ -1698,6 +1736,7 @@ end
 
 -- Unused for now
 function x:OnEnable() end
+
 function x:OnDisable() end
 
 -- This allows us to create our config dialog
@@ -1710,15 +1749,15 @@ local ACR = LibStub('AceConfigRegistry-3.0')
 ACD:SetDefaultSize(AddonName, 803, 560)
 AC:RegisterOptionsTable(AddonName, addon.options)
 
--- Register addon to the new compartment frame see https://wowpedia.fandom.com/wiki/Addon_compartment
-AddonCompartmentFrame:RegisterAddon({
-  text = AddonName,
-  registerForAnyClick = true,
-  notCheckable = true,
-  func = function(btn, arg1, arg2, checked, mouseButton)
-    x.ToggleConfigTool()
-  end
-})
+-- -- Register addon to the new compartment frame see https://wowpedia.fandom.com/wiki/Addon_compartment
+-- AddonCompartmentFrame:RegisterAddon({
+--   text = AddonName,
+--   registerForAnyClick = true,
+--   notCheckable = true,
+--   func = function(btn, arg1, arg2, checked, mouseButton)
+--     x.ToggleConfigTool()
+--   end
+-- })
 
 --AC:RegisterOptionsTable(AddonName.."Blizzard", x.blizzardOptions)
 --ACD:AddToBlizOptions(AddonName.."Blizzard", "|cffFF0000x|rCT+")
@@ -1729,7 +1768,7 @@ function x:CombatStateChanged()
   if x.db.profile.hideConfig then
     if self.inCombat then
       if x.myContainer then
-        if x.myContainer:IsShown( ) then
+        if x.myContainer:IsShown() then
           lastConfigState = true
           x:HideConfigTool()
         end
@@ -1746,9 +1785,9 @@ function x:CombatStateChanged()
   for framename, settings in pairs(x.db.profile.frames) do
     if settings.enableScrollable and settings.scrollableInCombat then
       if x.inCombat then
-        x:DisableFrameScrolling( framename )
+        x:DisableFrameScrolling(framename)
       else
-        x:EnableFrameScrolling( framename )
+        x:EnableFrameScrolling(framename)
       end
     end
   end
@@ -1794,7 +1833,7 @@ function x:OpenxCTCommand(input)
     return
   end
 
-  if string_match(string_lower(input),'cancel') then
+  if string_match(string_lower(input), 'cancel') then
     if x.configuring then
       x:UpdateFrames();
       x.EndConfigMode()
@@ -1841,7 +1880,7 @@ function x:OpenxCTCommand(input)
   end
 end
 
-local function myContainer_OnRelease( self )
+local function myContainer_OnRelease(self)
   AceGUI:Release(x.myContainer)
   x.myContainer = nil
 
@@ -1876,10 +1915,10 @@ function x:ShowConfigTool(...)
   -- Register my AddOn for Escape keypresses
   x.myContainer = AceGUI:Create("Frame")
   x.myContainer.frame:SetScript('OnHide', function(self)
-      x:HideConfigTool()
-    end)
+    x:HideConfigTool()
+  end)
   _G["xCT_PlusConfigFrame"] = x.myContainer.frame
-  table_insert( UISpecialFrames, "xCT_PlusConfigFrame" )
+  table_insert(UISpecialFrames, "xCT_PlusConfigFrame")
 
   -- Properly dispose of this frame
   x.myContainer:SetCallback("OnClose", myContainer_OnRelease)
@@ -1905,7 +1944,7 @@ function x:ShowConfigTool(...)
   ACD:Open(AddonName, x.myContainer)
 end
 
-local function HideConfigTool_OnUpdate( self, e )
+local function HideConfigTool_OnUpdate(self, e)
   x.waiterHideConfig:SetScript("OnUpdate", nil)
   x.isConfigToolOpen = false
 
@@ -1914,8 +1953,7 @@ local function HideConfigTool_OnUpdate( self, e )
   end
 end
 
-function x:HideConfigTool( wait )
-
+function x:HideConfigTool(wait)
   -- If the item that is call needs the frame for another unit of time
   if wait then
     if not x.waiterHideConfig then

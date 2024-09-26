@@ -12,16 +12,20 @@
  [  ©2020. All Rights Reserved.        ]
  [====================================]]
 
-local build = select(4, GetBuildInfo())
+local build                                                                                                                        = select(
+4, GetBuildInfo())
 
 -- this file handles updating the frame settings and anything that changes the UI frames themselves
-local ADDON_NAME, addon = ...
+local ADDON_NAME, addon                                                                                                            = ...
 
-local LSM = LibStub("LibSharedMedia-3.0");
+local LSM                                                                                                                          = LibStub(
+"LibSharedMedia-3.0");
 
 -- Setup up values
 local ssub, sformat, sgsub, pairs, tonumber, tostring, math, unpack, print, type, mfloor, random, table_insert, format, _G, select
-	= string.sub, string.format, string.gsub, pairs, tonumber, tostring, math, unpack, print, type, math.floor, math.random, table.insert, string.format, _G, select
+                                                                                                                                   = string
+.sub, string.format, string.gsub, pairs, tonumber, tostring, math, unpack, print, type, math.floor, math.random,
+	table.insert, string.format, _G, select
 
 -- Start the Random Machine!
 random(time()); random(); random(time())
@@ -30,7 +34,7 @@ random(time()); random(); random(time())
 local x = addon.engine
 
 -- Store my frames
-x.frames = { }
+x.frames = {}
 
 -- Static frame lookup
 local frameIndex = {
@@ -47,15 +51,15 @@ local frameIndex = {
 
 -- Static Title Lookup
 x.FrameTitles = {
-	["general"]		= "General",					-- COMBAT_TEXT_LABEL,
-	["outgoing"]	= "Outgoing",					-- SCORE_DAMAGE_DONE.." / "..SCORE_HEALING_DONE,
-	["critical"]	= "Outgoing (Criticals)",		-- TEXT_MODE_A_STRING_RESULT_CRITICAL:gsub("%(", ""):gsub("%)", ""), -- "(Critical)" --> "Critical"
-	["damage"]		= "Damage (Incoming)",			-- DAMAGE,
-	["healing"]		= "Healing (Incoming)",			-- SHOW_COMBAT_HEALING,
-	["power"]		= "Class Power",				-- COMBAT_TEXT_SHOW_ENERGIZE_TEXT,
+	["general"]  = "General",            -- COMBAT_TEXT_LABEL,
+	["outgoing"] = "Outgoing",           -- SCORE_DAMAGE_DONE.." / "..SCORE_HEALING_DONE,
+	["critical"] = "Outgoing (Criticals)", -- TEXT_MODE_A_STRING_RESULT_CRITICAL:gsub("%(", ""):gsub("%)", ""), -- "(Critical)" --> "Critical"
+	["damage"]   = "Damage (Incoming)",  -- DAMAGE,
+	["healing"]  = "Healing (Incoming)", -- SHOW_COMBAT_HEALING,
+	["power"]    = "Class Power",        -- COMBAT_TEXT_SHOW_ENERGIZE_TEXT,
 	--["class"]		= "Combo",						-- COMBAT_TEXT_SHOW_COMBO_POINTS_TEXT,
-	["procs"]		= "Special Effects (Procs)",	-- COMBAT_TEXT_SHOW_REACTIVES_TEXT,
-	["loot"]		= "Loot & Money",				-- LOOT,
+	["procs"]    = "Special Effects (Procs)", -- COMBAT_TEXT_SHOW_REACTIVES_TEXT,
+	["loot"]     = "Loot & Money",       -- LOOT,
 }
 
 local frameTitles = x.FrameTitles
@@ -82,7 +86,7 @@ end
 
 local function Frame_SendTestMessage_OnUpdate(self, e)
 	if self.frameName == "class" then
-		x:AddMessage(self.frameName, "0", self.settings.fontColor or {1,1,0})
+		x:AddMessage(self.frameName, "0", self.settings.fontColor or { 1, 1, 0 })
 
 		if not self.timer then
 			self.timer = CreateFrame("FRAME")
@@ -93,7 +97,7 @@ local function Frame_SendTestMessage_OnUpdate(self, e)
 			self.timer.last = 0
 		end
 	else
-		x:AddMessage(self.frameName, self.frameName.." test message", self.settings.fontColor or {1,1,1})
+		x:AddMessage(self.frameName, self.frameName .. " test message", self.settings.fontColor or { 1, 1, 1 })
 	end
 
 	if x.testing then
@@ -120,11 +124,10 @@ end
 --	be updated.
 -- =====================================================
 function x:UpdateFrames(specificFrame)
-
 	-- Update Head Numbers and FCT Font Settings
-	if build < 70000 then
-		if not specificFrame then x:UpdateBlizzardFCT() end
-	end
+	-- if build < 70000 then
+	-- 	if not specificFrame then x:UpdateBlizzardFCT() end
+	-- end
 
 	-- Update the frames
 	for framename, settings in pairs(x.db.profile.frames) do
@@ -135,7 +138,7 @@ function x:UpdateFrames(specificFrame)
 			if x.frames[framename] then
 				f = x.frames[framename]
 			else
-				f = CreateFrame("ScrollingMessageFrame", "xCT_Plus"..framename.."Frame", UIParent, "BackdropTemplate")
+				f = CreateFrame("ScrollingMessageFrame", "xCT_Plus" .. framename .. "Frame", UIParent, "BackdropTemplate")
 				f:SetSpacing(2)
 				f:ClearAllPoints()
 				f:SetMovable(true)
@@ -145,14 +148,14 @@ function x:UpdateFrames(specificFrame)
 				f:SetClampedToScreen(true)
 				f:SetShadowColor(0, 0, 0, 0)
 
-				f.sizing = CreateFrame("Frame", "xCT_Plus"..framename.."SizingFrame", f)
+				f.sizing = CreateFrame("Frame", "xCT_Plus" .. framename .. "SizingFrame", f)
 				f.sizing.parent = f
 				f.sizing:SetHeight(16)
 				f.sizing:SetWidth(16)
 				f.sizing:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -1, 1)
 				f.sizing:Hide()
 
-				f.moving = CreateFrame("Frame", "xCT_Plus"..framename.."MovingFrame", f)
+				f.moving = CreateFrame("Frame", "xCT_Plus" .. framename .. "MovingFrame", f)
 				f.moving.parent = f
 				f.moving:SetPoint("TOPLEFT", f, "TOPLEFT", 1, -1)
 				f.moving:SetPoint("TOPRIGHT", f, "TOPRIGHT", -1, -21)
@@ -178,7 +181,8 @@ function x:UpdateFrames(specificFrame)
 				f:SetHeight(settings.Height)
 
 				-- WoW's default movement from changing the anchor
-				local point, relativeTo, relativePoint, xOfs, yOfs = unpack(f:GetNumPoints() > 0 and {f:GetPoint(0)} or {})
+				local point, relativeTo, relativePoint, xOfs, yOfs = unpack(f:GetNumPoints() > 0 and { f:GetPoint(0) } or
+				{})
 
 				-- If the point is not center, then something dirty happened... clean it up
 				if point and point ~= "CENTER" then
@@ -214,12 +218,13 @@ function x:UpdateFrames(specificFrame)
 
 			-- Insert Direction
 			if settings.insertText then
-				f:SetInsertMode(settings.insertText == 'top' and SCROLLING_MESSAGE_FRAME_INSERT_MODE_TOP or SCROLLING_MESSAGE_FRAME_INSERT_MODE_BOTTOM)
+				f:SetInsertMode(settings.insertText == 'top' and SCROLLING_MESSAGE_FRAME_INSERT_MODE_TOP or
+				SCROLLING_MESSAGE_FRAME_INSERT_MODE_BOTTOM)
 			end
 
 			-- Font Template
 			local outline = ssub(settings.fontOutline, 2)
-			
+
 			if outline == "NONE" then
 				f:SetFont(LSM:Fetch("font", settings.font), settings.fontSize, "")
 			else
@@ -240,16 +245,16 @@ function x:UpdateFrames(specificFrame)
 					f:SetMaxLines(settings.scrollableLines)
 					if not settings.scrollableInCombat then
 						if InCombatLockdown() then
-							x:DisableFrameScrolling( framename )
+							x:DisableFrameScrolling(framename)
 						else
-							x:EnableFrameScrolling( framename )
+							x:EnableFrameScrolling(framename)
 						end
 					else
-						x:EnableFrameScrolling( framename )
+						x:EnableFrameScrolling(framename)
 					end
 				else
 					f:SetMaxLines(math.max(1, mfloor(settings.Height / settings.fontSize) - 1)) --- shhhhhhhhhhhhhhhhhhhh
-					x:DisableFrameScrolling( framename )
+					x:DisableFrameScrolling(framename)
 				end
 			end
 
@@ -284,18 +289,18 @@ function x:UpdateFrames(specificFrame)
 	end
 end
 
-function x:EnableFrameScrolling( framename )
-  local f = x.frames[framename]
-  local settings = x.db.profile.frames[framename]
-  f:EnableMouseWheel(true)
-  f:SetScript("OnMouseWheel", Frame_OnMouseWheel)
+function x:EnableFrameScrolling(framename)
+	local f = x.frames[framename]
+	local settings = x.db.profile.frames[framename]
+	f:EnableMouseWheel(true)
+	f:SetScript("OnMouseWheel", Frame_OnMouseWheel)
 end
 
-function x:DisableFrameScrolling( framename )
-  local f = x.frames[framename]
-  local settings = x.db.profile.frames[framename]
-  f:EnableMouseWheel(false)
-  f:SetScript("OnMouseWheel", nil)
+function x:DisableFrameScrolling(framename)
+	local f = x.frames[framename]
+	local settings = x.db.profile.frames[framename]
+	f:EnableMouseWheel(false)
+	f:SetScript("OnMouseWheel", nil)
 end
 
 -- =====================================================
@@ -343,19 +348,23 @@ function x:Abbreviate(amount, frameName)
 			if GetLocale() == "koKR" then
 				if (amount >= 100000000) then
 					if self.db.profile.megaDamage.decimalPoint then
-						message = tostring(mfloor((amount + 5000000) / 10000000) / 10) .. self.db.profile.megaDamage.billionSymbol
+						message = tostring(mfloor((amount + 5000000) / 10000000) / 10) ..
+						self.db.profile.megaDamage.billionSymbol
 					else
-						message = tostring(mfloor((amount + 50000000) / 100000000)) .. self.db.profile.megaDamage.billionSymbol
+						message = tostring(mfloor((amount + 50000000) / 100000000)) ..
+						self.db.profile.megaDamage.billionSymbol
 					end
 				elseif (amount >= 10000) then
 					if self.db.profile.megaDamage.decimalPoint then
-						message = tostring(mfloor((amount + 500) / 1000) / 10) .. self.db.profile.megaDamage.millionSymbol
+						message = tostring(mfloor((amount + 500) / 1000) / 10) ..
+						self.db.profile.megaDamage.millionSymbol
 					else
 						message = tostring(mfloor((amount + 5000) / 10000)) .. self.db.profile.megaDamage.millionSymbol
 					end
 				elseif (amount >= 1000) then
 					if self.db.profile.megaDamage.decimalPoint then
-						message = tostring(mfloor((amount + 50) / 100) / 10) .. self.db.profile.megaDamage.thousandSymbol
+						message = tostring(mfloor((amount + 50) / 100) / 10) .. self.db.profile.megaDamage
+						.thousandSymbol
 					else
 						message = tostring(mfloor((amount + 500) / 1000)) .. self.db.profile.megaDamage.thousandSymbol
 					end
@@ -363,19 +372,24 @@ function x:Abbreviate(amount, frameName)
 			else
 				if (amount >= 1000000000) then
 					if self.db.profile.megaDamage.decimalPoint then
-						message = tostring(mfloor((amount + 50000000) / 100000000) / 10) .. self.db.profile.megaDamage.billionSymbol
+						message = tostring(mfloor((amount + 50000000) / 100000000) / 10) ..
+						self.db.profile.megaDamage.billionSymbol
 					else
-						message = tostring(mfloor((amount + 500000000) / 1000000000)) .. self.db.profile.megaDamage.billionSymbol
+						message = tostring(mfloor((amount + 500000000) / 1000000000)) ..
+						self.db.profile.megaDamage.billionSymbol
 					end
 				elseif (amount >= 1000000) then
 					if self.db.profile.megaDamage.decimalPoint then
-						message = tostring(mfloor((amount + 50000) / 100000) / 10) .. self.db.profile.megaDamage.millionSymbol
+						message = tostring(mfloor((amount + 50000) / 100000) / 10) ..
+						self.db.profile.megaDamage.millionSymbol
 					else
-						message = tostring(mfloor((amount + 500000) / 1000000)) .. self.db.profile.megaDamage.millionSymbol
+						message = tostring(mfloor((amount + 500000) / 1000000)) ..
+						self.db.profile.megaDamage.millionSymbol
 					end
 				elseif (amount >= 1000) then
 					if self.db.profile.megaDamage.decimalPoint then
-						message = tostring(mfloor((amount + 50) / 100) / 10) .. self.db.profile.megaDamage.thousandSymbol
+						message = tostring(mfloor((amount + 50) / 100) / 10) .. self.db.profile.megaDamage
+						.thousandSymbol
 					else
 						message = tostring(mfloor((amount + 500) / 1000)) .. self.db.profile.megaDamage.thousandSymbol
 					end
@@ -387,7 +401,7 @@ function x:Abbreviate(amount, frameName)
 			local k
 			while true do
 				message, k = sgsub(message, '^(-?%d+)(%d%d%d)', '%1,%2')
-				if (k==0) then break end
+				if (k == 0) then break end
 			end
 		end
 	end
@@ -409,7 +423,10 @@ function x:AddMessage(framename, message, colorname)
 	local frameOptions = x.db.profile.frames[framename]
 
 	-- Make sure we have a valid frame
-	if not frameOptions then print("xct+ frame name not found:", framename) return end
+	if not frameOptions then
+		print("xct+ frame name not found:", framename)
+		return
+	end
 
 	local secondFrameName = frameIndex[frameOptions.secondaryFrame]
 	local secondFrame = x.frames[secondFrameName]
@@ -425,7 +442,7 @@ function x:AddMessage(framename, message, colorname)
 			if color then
 				r, g, b = unpack(color)
 			else
-				print("FRAME:", framename,"  xct+ says there is no color named:", colorname)
+				print("FRAME:", framename, "  xct+ says there is no color named:", colorname)
 				error("missing color")
 			end
 		end
@@ -434,12 +451,12 @@ function x:AddMessage(framename, message, colorname)
 		if frameOptions.enabledFrame then
 			-- check for forced color
 			if frameOptions.customColor then
-				r, g, b = unpack(frameOptions.fontColor or {1, 1, 1})
+				r, g, b = unpack(frameOptions.fontColor or { 1, 1, 1 })
 			end
 			frame:AddMessage(message, r, g, b)
 		elseif secondFrame and secondFrameOptions.enabledFrame then
-			if secondFrameOptions.customColor then			-- check for forced color
-				r, g, b = unpack(secondFrameOptions.fontColor or {1, 1, 1})
+			if secondFrameOptions.customColor then -- check for forced color
+				r, g, b = unpack(secondFrameOptions.fontColor or { 1, 1, 1 })
 			end
 			secondFrame:AddMessage(message, r, g, b)
 		end
@@ -449,7 +466,7 @@ end
 -- WoW - Battle for Azeroth doesn't support fading textures with SetAlpha?
 -- We have to do it on a font string level
 local ScrollingMessageFrame_OverrideAlpha_Worker = CreateFrame("FRAME")
-ScrollingMessageFrame_OverrideAlpha_Worker:SetScript("OnUpdate", function ()
+ScrollingMessageFrame_OverrideAlpha_Worker:SetScript("OnUpdate", function()
 	local now, alpha, scale = GetTime()
 	for name, frame in pairs(x.frames) do
 		alpha = frame.settings.alpha / 100
@@ -460,20 +477,20 @@ ScrollingMessageFrame_OverrideAlpha_Worker:SetScript("OnUpdate", function ()
 			for lineIndex, visibleLine in ipairs(frame.visibleLines) do
 				if visibleLine.messageInfo then -- Check for valid font strings (not released)
 					-- Keep the default fading, we will use their value to scale the custom alpha
-					scale = frame:CalculateLineAlphaValueFromTimestamp(now, math.max(visibleLine.messageInfo.timestamp, frame.overrideFadeTimestamp))
+					scale = frame:CalculateLineAlphaValueFromTimestamp(now,
+						math.max(visibleLine.messageInfo.timestamp, frame.overrideFadeTimestamp))
 
 					-- If we are fading the message away and fading is enabled
 					if scale ~= 1 and frame:CanEffectivelyFade() then
-						visibleLine:SetAlpha(alpha * scale)	-- Fade the font string, scaled for the custom amount
+						visibleLine:SetAlpha(alpha * scale) -- Fade the font string, scaled for the custom amount
 
-					-- Only change the font string's alpha if it didn't already change
+						-- Only change the font string's alpha if it didn't already change
 					elseif visibleLine:GetAlpha() ~= alpha then
 						visibleLine:SetAlpha(alpha)
 					end
 				end
 			end
 		end
-
 	end
 end)
 
@@ -497,7 +514,6 @@ local spam_format = "%s%s x%s"
 --		Sends a message to the framename specified.
 -- =====================================================
 function x:AddSpamMessage(framename, mergeID, message, colorname, interval, prep, ...)
-
 	-- Check for a Secondary Spell ID
 	mergeID = addon.merge2h[mergeID] or mergeID
 
@@ -540,12 +556,12 @@ function x:AddSpamMessage(framename, mergeID, message, colorname, interval, prep
 			error("an even amount of extra args are required to add an entry to merge")
 		end
 		--print("extra args pairs:", select("#", ...)/2)
-		for i=1,select("#", ...),2 do
+		for i = 1, select("#", ...), 2 do
 			if heap[mergeID][select(i, ...)] then
 				error("reserved keyword in entry added to merge: '" .. tostring(select(i, ...)) .. "'")
 			end
 			--print(" -->", select(i, ...), "=", select(i+1, ...))
-			heap[mergeID][select(i, ...)] = select(i+1, ...)
+			heap[mergeID][select(i, ...)] = select(i + 1, ...)
 		end
 		table_insert(stack, mergeID)
 	end
@@ -622,14 +638,14 @@ do
 		end
 
 		local heap, stack, settings, idIndex =
-			spamHeap[frameName],            -- the heap contains merge entries
-			spamStack[frameName],           -- the stack contains lookup values
+			spamHeap[frameName],   -- the heap contains merge entries
+			spamStack[frameName],  -- the stack contains lookup values
 			x.db.profile.frames[frameName], -- this frame's settings
-			frames[frameName]               -- this frame's last entry index
+			frames[frameName]      -- this frame's last entry index
 
 		-- If the frame is not enabled, then dont even worry about it
 		if not settings.enabledFrame and settings.secondaryFrame == 0 then
-			index = index + 1	-- heh, still need to iterate to the next frame :P
+			index = index + 1 -- heh, still need to iterate to the next frame :P
 			return
 		end
 
@@ -680,7 +696,7 @@ do
 					end
 				end
 
-			-- Show healer name (colored)
+				-- Show healer name (colored)
 			elseif frameName == "healing" then
 				--format_mergeCount = "%s |cffFFFF00x%s|r"
 				local strColor = "ffff00"
@@ -701,19 +717,21 @@ do
 
 			-- Add Icons
 			if frameName == "outgoing" or frameName == "critical" then
-				message = x:GetSpellTextureFormatted( stack[idIndex],
-				                                      message,
-				                                      settings.iconsEnabled and settings.iconsSize or -1,
-				                                      settings.spacerIconsEnabled,
-				                                      settings.fontJustify,
-				                                      strColor,
-				                                      true, -- Merge Override = true
-				                                      item.mergedCount )
+				message = x:GetSpellTextureFormatted(stack[idIndex],
+					message,
+					settings.iconsEnabled and settings.iconsSize or -1,
+					settings.spacerIconsEnabled,
+					settings.fontJustify,
+					strColor,
+					true,                       -- Merge Override = true
+					item.mergedCount)
 			elseif frameName == "healing" or frameName == "damage" then
 				if item.mergedCount > 1 then
-					message = sformat(" |T"..x.BLANK_ICON..":%d:%d:0:0:64:64:5:59:5:59|t %s |cff%sx%s|r", settings.iconsSize, settings.iconsSize, message, strColor, item.mergedCount)
+					message = sformat(" |T" .. x.BLANK_ICON .. ":%d:%d:0:0:64:64:5:59:5:59|t %s |cff%sx%s|r",
+						settings.iconsSize, settings.iconsSize, message, strColor, item.mergedCount)
 				else
-					message = sformat(" |T"..x.BLANK_ICON..":%d:%d:0:0:64:64:5:59:5:59|t %s", settings.iconsSize, settings.iconsSize, message)
+					message = sformat(" |T" .. x.BLANK_ICON .. ":%d:%d:0:0:64:64:5:59:5:59|t %s", settings.iconsSize,
+						settings.iconsSize, message)
 				end
 			end
 
@@ -734,7 +752,7 @@ end
 
 local function Frame_Sizing_OnUpdate(self, e)
 	local settings = self.parent.settings
-	local width, height = mfloor(self.parent:GetWidth()+.5), mfloor(self.parent:GetHeight()+.5)
+	local width, height = mfloor(self.parent:GetWidth() + .5), mfloor(self.parent:GetHeight() + .5)
 	self.parent.width:SetText(width)
 	self.parent.height:SetText(height)
 
@@ -743,8 +761,8 @@ end
 
 local function Frame_Moving_OnUpdate(self, e)
 	-- Calculate get the center of the screen from the left/top
-	local posX = mfloor(mfloor(self.parent:GetLeft()-GetScreenWidth()/2+.5))
-	local posY = mfloor(mfloor(self.parent:GetTop()-GetScreenHeight()/2+.5))
+	local posX = mfloor(mfloor(self.parent:GetLeft() - GetScreenWidth() / 2 + .5))
+	local posY = mfloor(mfloor(self.parent:GetTop() - GetScreenHeight() / 2 + .5))
 
 	-- Set the position of the frame
 	self.parent.position:SetText(sformat("%d, %d", posX, posY))
@@ -816,14 +834,14 @@ function x.StartConfigMode()
 		if settings.enabledFrame then
 			local f = x:GetFrame(framename)
 
-			f:SetBackdrop( {
-					bgFile	 	= "Interface/Tooltips/UI-Tooltip-Background",
-					edgeFile 	= "Interface/Tooltips/UI-Tooltip-Border",
-					tile		= false,
-					tileSize 	= 0,
-					edgeSize 	= 2,
-					insets 		= { left = 0, right = 0, top = 0, bottom = 0 }
-				} )
+			f:SetBackdrop({
+				bgFile   = "Interface/Tooltips/UI-Tooltip-Background",
+				edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+				tile     = false,
+				tileSize = 0,
+				edgeSize = 2,
+				insets   = { left = 0, right = 0, top = 0, bottom = 0 }
+			})
 
 			f:SetBackdropColor(.1, .1, .1, .8)
 			f:SetBackdropBorderColor(.1, .1, .1, .5)
@@ -843,19 +861,19 @@ function x.StartConfigMode()
 			f.width:SetTextColor(.47, .55, .87, 1)
 			f.width:SetPoint("TOP", f, "BOTTOM", 0, -2)
 			f.width:SetFont(LSM:Fetch("font", "Condensed Bold (xCT+)"), 18, "OUTLINE")
-			f.width:SetText(mfloor(f:GetWidth()+.5))
+			f.width:SetText(mfloor(f:GetWidth() + .5))
 			f.width:Hide()
 
 			f.height = f:CreateFontString(nil, "OVERLAY")
 			f.height:SetTextColor(.47, .55, .87, 1)
 			f.height:SetPoint("LEFT", f, "RIGHT", 4, 0)
 			f.height:SetFont(LSM:Fetch("font", "Condensed Bold (xCT+)"), 18, "OUTLINE")
-			f.height:SetText(mfloor(f:GetHeight()+.5))
+			f.height:SetText(mfloor(f:GetHeight() + .5))
 			f.height:Hide()
 
 			-- Calculate get the center of the screen from the left/top
-			local posX = mfloor(mfloor(f:GetLeft()-GetScreenWidth()/2+.5))
-			local posY = mfloor(mfloor(f:GetTop()-GetScreenHeight()/2+.5))
+			local posX = mfloor(mfloor(f:GetLeft() - GetScreenWidth() / 2 + .5))
+			local posY = mfloor(mfloor(f:GetTop() - GetScreenHeight() / 2 + .5))
 
 			-- Position Text
 			f.position = f:CreateFontString(nil, "OVERLAY")
@@ -910,7 +928,6 @@ function x.StartConfigMode()
 			end
 
 			f:SetFrameStrata("FULLSCREEN_DIALOG")
-
 		end
 	end
 end
@@ -1035,7 +1052,6 @@ function x:SaveAllFrames()
 			-- Calculate get the center of the screen from the left/top
 			settings.X = mfloor(left + (width / 2) + .5)
 			settings.Y = mfloor(top - (height / 2) + .5)
-
 		end
 	end
 end
@@ -1071,10 +1087,11 @@ function x.TestMoreUpdate(self, elapsed)
 			self.lastUpdate = 0
 
 			if self == x.frames["general"] and random(3) % 3 == 0 then
-				local output, color = "general", {random(255) / 255, random(255) / 255, random(255) / 255}
+				local output, color = "general", { random(255) / 255, random(255) / 255, random(255) / 255 }
 				if not x.db.profile.frames[output].enabledFrame then
 					x:Clear(output)
-					if x.db.profile.frames[output].secondaryFrame ~= 0 then output = frameIndex[x.db.profile.frames[output].secondaryFrame] else return end
+					if x.db.profile.frames[output].secondaryFrame ~= 0 then output = frameIndex
+						[x.db.profile.frames[output].secondaryFrame] else return end
 				end
 				if x.db.profile.frames[output].customColor then
 					color = x.db.profile.frames[output].fontColor
@@ -1084,63 +1101,69 @@ function x.TestMoreUpdate(self, elapsed)
 				local output, color = "outgoing", GetRandomSpellColor()
 				if not x.db.profile.frames[output].enabledFrame then
 					x:Clear(output)
-					if x.db.profile.frames[output].secondaryFrame ~= 0 then output = frameIndex[x.db.profile.frames[output].secondaryFrame] else return end
+					if x.db.profile.frames[output].secondaryFrame ~= 0 then output = frameIndex
+						[x.db.profile.frames[output].secondaryFrame] else return end
 				end
 				local message = x:Abbreviate(random(60000), "outgoing")
 				local merged, multistriked = false, 0
 				if x.db.profile.spells.enableMerger and random(3) % 3 == 0 then
-					multistriked = random(17)+1
+					multistriked = random(17) + 1
 					merged = true
 				end
 				if x.db.profile.frames[output].customColor then
 					color = x.db.profile.frames[output].fontColor
 				end
 				message = x:GetSpellTextureFormatted(
-						x.db.profile.frames["outgoing"].iconsEnabled and GetRandomSpellID() or -1,
-						message, x.db.profile.frames["outgoing"].iconsSize,
-						x.db.profile.frames["outgoing"].spacerIconsEnabled, x.db.profile.frames["outgoing"].fontJustify, nil, merged, multistriked )
+					x.db.profile.frames["outgoing"].iconsEnabled and GetRandomSpellID() or -1,
+					message, x.db.profile.frames["outgoing"].iconsSize,
+					x.db.profile.frames["outgoing"].spacerIconsEnabled, x.db.profile.frames["outgoing"].fontJustify, nil,
+					merged, multistriked)
 				x:AddMessage(output, message, color)
 			elseif self == x.frames["critical"] and random(2) % 2 == 0 then
 				local output, color = "critical", GetRandomSpellColor()
 				if not x.db.profile.frames[output].enabledFrame then
 					x:Clear(output)
-					if x.db.profile.frames[output].secondaryFrame ~= 0 then output = frameIndex[x.db.profile.frames[output].secondaryFrame] else return end
+					if x.db.profile.frames[output].secondaryFrame ~= 0 then output = frameIndex
+						[x.db.profile.frames[output].secondaryFrame] else return end
 				end
-				local message = x.db.profile.frames.critical.critPrefix .. x:Abbreviate(random(60000), "critical") .. x.db.profile.frames.critical.critPostfix
+				local message = x.db.profile.frames.critical.critPrefix ..
+				x:Abbreviate(random(60000), "critical") .. x.db.profile.frames.critical.critPostfix
 				local merged, multistriked = false, 0
 				if x.db.profile.spells.enableMerger and (random(3) % 3 == 0) and (x.db.profile.spells.mergeCriticalsWithOutgoing or x.db.profile.spells.mergeCriticalsByThemselves) then
-					multistriked = random(17)+1
+					multistriked = random(17) + 1
 					merged = true
 				end
 				if x.db.profile.frames[output].customColor then
 					color = x.db.profile.frames[output].fontColor
 				end
 				message = x:GetSpellTextureFormatted(
-						x.db.profile.frames["critical"].iconsEnabled and GetRandomSpellID() or -1, -- spellID
-						message, -- message
-						x.db.profile.frames["critical"].iconsSize, -- iconSize
-						x.db.profile.frames["critical"].spacerIconsEnabled, -- showInvisibleIcon
-						x.db.profile.frames["critical"].fontJustify, -- justify
-						nil, -- strColor
-						merged, -- mergeOverride
-						multistriked -- entries
-					)
+					x.db.profile.frames["critical"].iconsEnabled and GetRandomSpellID() or -1, -- spellID
+					message,                                                     -- message
+					x.db.profile.frames["critical"].iconsSize,                   -- iconSize
+					x.db.profile.frames["critical"].spacerIconsEnabled,          -- showInvisibleIcon
+					x.db.profile.frames["critical"].fontJustify,                 -- justify
+					nil,                                                         -- strColor
+					merged,                                                      -- mergeOverride
+					multistriked                                                 -- entries
+				)
 				x:AddMessage(output, message, color)
 			elseif self == x.frames["damage"] and random(2) % 2 == 0 then
-				local output, color = "damage", {1, random(100) / 255, random(100) / 255}
+				local output, color = "damage", { 1, random(100) / 255, random(100) / 255 }
 				if not x.db.profile.frames[output].enabledFrame then
 					x:Clear(output)
-					if x.db.profile.frames[output].secondaryFrame ~= 0 then output = frameIndex[x.db.profile.frames[output].secondaryFrame] else return end
+					if x.db.profile.frames[output].secondaryFrame ~= 0 then output = frameIndex
+						[x.db.profile.frames[output].secondaryFrame] else return end
 				end
 				if x.db.profile.frames[output].customColor then
 					color = x.db.profile.frames[output].fontColor
 				end
-				x:AddMessage(output, "-"..x:Abbreviate(random(100000), "damage"), color)
+				x:AddMessage(output, "-" .. x:Abbreviate(random(100000), "damage"), color)
 			elseif self == x.frames["healing"] and random(2) % 2 == 0 then
-				local output, color = "healing", {.1, ((random(3) + 1) * 63) / 255, .1}
+				local output, color = "healing", { .1, ((random(3) + 1) * 63) / 255, .1 }
 				if not x.db.profile.frames[output].enabledFrame then
 					x:Clear(output)
-					if x.db.profile.frames[output].secondaryFrame ~= 0 then output = frameIndex[x.db.profile.frames[output].secondaryFrame] else return end
+					if x.db.profile.frames[output].secondaryFrame ~= 0 then output = frameIndex
+						[x.db.profile.frames[output].secondaryFrame] else return end
 				end
 				if x.db.profile.frames[output].customColor then
 					color = x.db.profile.frames[output].fontColor
@@ -1148,31 +1171,36 @@ function x.TestMoreUpdate(self, elapsed)
 				if COMBAT_TEXT_SHOW_FRIENDLY_NAMES == "1" then
 					local message = UnitName("player")
 					local realm = ""
-					if x.db.profile.frames["healing"].enableRealmNames then realm = "-"..GetRealmName() end
+					if x.db.profile.frames["healing"].enableRealmNames then realm = "-" .. GetRealmName() end
 					if x.db.profile.frames["healing"].enableClassNames then
-						message = sformat("|c%s%s%s|r", RAID_CLASS_COLORS[select(2,UnitClass("player"))].colorStr, message, realm)
+						message = sformat("|c%s%s%s|r", RAID_CLASS_COLORS[select(2, UnitClass("player"))].colorStr,
+							message, realm)
 					end
 					if x.db.profile.spells.mergeHealing and random(2) % 2 == 0 then
-						message = sformat("%s |cffFFFF00x%s|r", message, random(17)+1)
+						message = sformat("%s |cffFFFF00x%s|r", message, random(17) + 1)
 					end
-					x:AddMessage(output, "+"..x:Abbreviate(random(90000),"healing") .. " "..message, color)
+					x:AddMessage(output, "+" .. x:Abbreviate(random(90000), "healing") .. " " .. message, color)
 				else
-					x:AddMessage(output, "+"..x:Abbreviate(random(90000),"healing"), color)
+					x:AddMessage(output, "+" .. x:Abbreviate(random(90000), "healing"), color)
 				end
 			elseif self == x.frames["power"] and random(4) % 4 == 0 then
 				local output = "power"
 				if not x.db.profile.frames[output].enabledFrame then
 					x:Clear(output)
-					if x.db.profile.frames[output].secondaryFrame ~= 0 then output = frameIndex[x.db.profile.frames[output].secondaryFrame] else return end
+					if x.db.profile.frames[output].secondaryFrame ~= 0 then output = frameIndex
+						[x.db.profile.frames[output].secondaryFrame] else return end
 				end
 				local _, powerToken = UnitPowerType("player")
 				local color = { PowerBarColor[powerToken].r, PowerBarColor[powerToken].g, PowerBarColor[powerToken].b }
 				if x.db.profile.frames[output].customColor then
 					color = x.db.profile.frames[output].fontColor
 				end
-				x:AddMessage(output, "+"..x:Abbreviate(random(5000),"power").." ".._G[powerToken], color)
+				x:AddMessage(output, "+" .. x:Abbreviate(random(5000), "power") .. " " .. _G[powerToken], color)
 			elseif self == x.frames["class"] and random(4) % 4 == 0 then
-				if not x.db.profile.frames["class"].enabledFrame then x:Clear("class") return end
+				if not x.db.profile.frames["class"].enabledFrame then
+					x:Clear("class")
+					return
+				end
 				if not self.testCombo then
 					self.testCombo = 0
 				end
@@ -1180,7 +1208,7 @@ function x.TestMoreUpdate(self, elapsed)
 				if self.testCombo > 8 then
 					self.testCombo = 1
 				end
-				local color = {1, .82, 0}
+				local color = { 1, .82, 0 }
 				if x.db.profile.frames["class"].customColor then
 					color = x.db.profile.frames["class"].fontColor
 				end
@@ -1189,9 +1217,10 @@ function x.TestMoreUpdate(self, elapsed)
 				local output = "procs"
 				if not x.db.profile.frames[output].enabledFrame then
 					x:Clear(output)
-					if x.db.profile.frames[output].secondaryFrame ~= 0 then output = frameIndex[x.db.profile.frames[output].secondaryFrame] else return end
+					if x.db.profile.frames[output].secondaryFrame ~= 0 then output = frameIndex
+						[x.db.profile.frames[output].secondaryFrame] else return end
 				end
-				local color = {1, 1, 0}
+				local color = { 1, 1, 0 }
 				if x.db.profile.frames[output].customColor then
 					color = x.db.profile.frames[output].fontColor
 				end
@@ -1200,17 +1229,21 @@ function x.TestMoreUpdate(self, elapsed)
 				local output = "loot"
 				if not x.db.profile.frames[output].enabledFrame then
 					x:Clear(output)
-					if x.db.profile.frames[output].secondaryFrame ~= 0 then output = frameIndex[x.db.profile.frames[output].secondaryFrame] else return end
+					if x.db.profile.frames[output].secondaryFrame ~= 0 then output = frameIndex
+						[x.db.profile.frames[output].secondaryFrame] else return end
 				end
-				local color = {1, 1, 0}
+				local color = { 1, 1, 0 }
 				if x.db.profile.frames[output].customColor then
 					color = x.db.profile.frames[output].fontColor
 				end
 				if x.db.profile.frames[output].colorBlindMoney then
-					local g, s, c, message = random(100) % 10 ~= 0 and random(100) or nil, random(100) % 10 ~= 0 and random(100) or nil, random(100) % 10 ~= 0 and random(100) or nil, ""
-					if g then message = tostring(g).."|cffFFD700g|r" end
-					if s then if g then message = message .. " " .. tostring(s).."|cffC0C0C0s|r" else message = message .. tostring(s).."|cffC0C0C0s|r" end end
-					if c then if s or g then message = message .. " " .. tostring(c).."|cffB87333c|r" else message = message .. tostring(c).."|cffB87333c|r" end end
+					local g, s, c, message = random(100) % 10 ~= 0 and random(100) or nil,
+						random(100) % 10 ~= 0 and random(100) or nil, random(100) % 10 ~= 0 and random(100) or nil, ""
+					if g then message = tostring(g) .. "|cffFFD700g|r" end
+					if s then if g then message = message .. " " .. tostring(s) .. "|cffC0C0C0s|r" else message = message ..
+							tostring(s) .. "|cffC0C0C0s|r" end end
+					if c then if s or g then message = message .. " " .. tostring(c) .. "|cffB87333c|r" else message =
+							message .. tostring(c) .. "|cffB87333c|r" end end
 					if not g and not s and not c then return end
 					x:AddMessage(output, MONEY .. ": " .. message, color)
 				else
@@ -1272,107 +1305,124 @@ end
 
 -- Popups
 StaticPopupDialogs["XCT_PLUS_CONFIGURING"] = {
-	text			= "Configuring xCT+\nType: |cffFF0000/xct lock|r to save changes",
-	timeout			= 0,
-	whileDead		= 1,
+	text           = "Configuring xCT+\nType: |cffFF0000/xct lock|r to save changes",
+	timeout        = 0,
+	whileDead      = 1,
 
-	button1			= SAVE_CHANGES,
-	button2			= CANCEL,
-	OnAccept		= function() x:SaveAllFrames(); x.EndConfigMode(); x:ShowConfigTool() print("|cffFF0000x|r|cffFFFF00CT+|r  Frames have been saved. Please fasten your seat belts.") end,
-	OnCancel		= function() x:UpdateFrames(); x.EndConfigMode(); x:ShowConfigTool() end,
-	hideOnEscape	= false,
+	button1        = SAVE_CHANGES,
+	button2        = CANCEL,
+	OnAccept       = function()
+		x:SaveAllFrames(); x.EndConfigMode(); x:ShowConfigTool()
+		print("|cffFF0000x|r|cffFFFF00CT+|r  Frames have been saved. Please fasten your seat belts.")
+	end,
+	OnCancel       = function()
+		x:UpdateFrames(); x.EndConfigMode(); x:ShowConfigTool()
+	end,
+	hideOnEscape   = false,
 
 	-- Taint work around
-	preferredIndex	= 3,
+	preferredIndex = 3,
 }
 
 StaticPopupDialogs["XCT_PLUS_TESTMODE"] = {
-	text			= "xCT+ Test Mode",
-	timeout			= 0,
-	whileDead		= 1,
+	text           = "xCT+ Test Mode",
+	timeout        = 0,
+	whileDead      = 1,
 
-	button1			= "Stop",
-	OnAccept		= function() x.EndTestMode(); x:ShowConfigTool() end,
-	hideOnEscape	= true,
+	button1        = "Stop",
+	OnAccept       = function()
+		x.EndTestMode(); x:ShowConfigTool()
+	end,
+	hideOnEscape   = true,
 
 	-- Taint work around
-	preferredIndex	= 3,
+	preferredIndex = 3,
 }
 
 StaticPopupDialogs["XCT_PLUS_RESET_SETTINGS"] = {
-	text			= "Are your certain you want to erase |cffFF0000ALL|r your xCT+ settings?",
-	timeout			= 0,
-	whileDead		= 1,
+	text           = "Are your certain you want to erase |cffFF0000ALL|r your xCT+ settings?",
+	timeout        = 0,
+	whileDead      = 1,
 
-	button1			= "|cffFF0000ERASE ALL!!|r",
-	button2			= CANCEL,
-	OnAccept		= function() xCTSavedDB = nil; ReloadUI() end,
-	OnCancel		= function() x:ShowConfigTool() end,
-	hideOnEscape	= true,
+	button1        = "|cffFF0000ERASE ALL!!|r",
+	button2        = CANCEL,
+	OnAccept       = function()
+		xCTSavedDB = nil; ReloadUI()
+	end,
+	OnCancel       = function() x:ShowConfigTool() end,
+	hideOnEscape   = true,
 
 	-- Taint work around
-	preferredIndex	= 3,
+	preferredIndex = 3,
 }
 
 StaticPopupDialogs["XCT_PLUS_HIDE_IN_COMBAT"] = {
-	text			= "|cffFFFF00Disable the|r |cff798BDDHide Config in Combat|r|cffFFFF00 feature?|r\n\n\n|cffFF0000WARNING:|r By disabling this protection you risk |cffFF8000tainting|r your UI. In some cases, you will need to type: '|cff798BDD/reload|r' in order to change |cff10FF40glyphs|r or |cff10FF40talents|r and to place |cff10FF40world markers|r.\n",
-	timeout			= 0,
-	whileDead		= 1,
+	text           =
+	"|cffFFFF00Disable the|r |cff798BDDHide Config in Combat|r|cffFFFF00 feature?|r\n\n\n|cffFF0000WARNING:|r By disabling this protection you risk |cffFF8000tainting|r your UI. In some cases, you will need to type: '|cff798BDD/reload|r' in order to change |cff10FF40glyphs|r or |cff10FF40talents|r and to place |cff10FF40world markers|r.\n",
+	timeout        = 0,
+	whileDead      = 1,
 
-	button1			= CONTINUE,
-	button2			= REVERT,
-	OnAccept		= x.noop,
-	OnCancel		= function() x.db.profile.hideConfig = true; x:RefreshConfig() end,
+	button1        = CONTINUE,
+	button2        = REVERT,
+	OnAccept       = x.noop,
+	OnCancel       = function()
+		x.db.profile.hideConfig = true; x:RefreshConfig()
+	end,
 
 	-- Taint work around
-	preferredIndex	= 3,
+	preferredIndex = 3,
 }
 
 StaticPopupDialogs["XCT_PLUS_DB_CLEANUP_1"] = {
-	text			  = "|cff798BDDxCT+ Spring Cleaning|r\n\nHello, |cffFFFF00xCT|r|cffFF0000+|r needed to cleanup some |cffFF0000old or removed spell entries|r from the spam merger. |cffFFFF00Those settings needed to be reset|r. The rest of your profile settings |cff22FF44remains the same|r.\n\nSorry for this inconvenience.\n\n",
-	timeout			= 0,
-	whileDead		= 1,
+	text           =
+	"|cff798BDDxCT+ Spring Cleaning|r\n\nHello, |cffFFFF00xCT|r|cffFF0000+|r needed to cleanup some |cffFF0000old or removed spell entries|r from the spam merger. |cffFFFF00Those settings needed to be reset|r. The rest of your profile settings |cff22FF44remains the same|r.\n\nSorry for this inconvenience.\n\n",
+	timeout        = 0,
+	whileDead      = 1,
 
-	button1			= OKAY.."!",
-	button2			= "Don't Show Again",
-	hideOnEscape	= true,
+	button1        = OKAY .. "!",
+	button2        = "Don't Show Again",
+	hideOnEscape   = true,
 
-	OnCancel		= function() x.db.global.dontShowDBCleaning = true end,
+	OnCancel       = function() x.db.global.dontShowDBCleaning = true end,
 
 	-- Taint work around
-	preferredIndex	= 3,
+	preferredIndex = 3,
 }
 
 StaticPopupDialogs["XCT_PLUS_FORCE_CVAR_UPDATE"] = {
-	text			= "|cff798BDDxCT+|r performed an action that requires it to update some |cffFFFF00Combat Text|r related |cffFF8000CVars|r. It is |cff20DD40highly recommened|r you reload your UI before changing any more settings.",
-	timeout			= 0,
-	whileDead		= 1,
+	text           =
+	"|cff798BDDxCT+|r performed an action that requires it to update some |cffFFFF00Combat Text|r related |cffFF8000CVars|r. It is |cff20DD40highly recommened|r you reload your UI before changing any more settings.",
+	timeout        = 0,
+	whileDead      = 1,
 
-	button1			= "Later",
-	button2			= "Reload UI Now",
-	OnAccept		= x.noop,
-	OnCancel		= ReloadUI,
+	button1        = "Later",
+	button2        = "Reload UI Now",
+	OnAccept       = x.noop,
+	OnCancel       = ReloadUI,
 
 	-- Taint work around
-	preferredIndex	= 3,
+	preferredIndex = 3,
 }
 
 StaticPopupDialogs["XCT_PLUS_SUGGEST_MULTISTRIKE_OFF"] = {
-	text            = ""
+	text = ""
 
 }
 
 StaticPopupDialogs["XCT_PLUS_DB_CLEANUP_2"] = {
-	text			= "|cffD7DF23xCT+ Legion Clean Up|r\n\nHello Again,\n\n I am sorry to inform you that |cffFFFF00xCT|r|cffFF0000+|r needs to\n\n|cffFF0000COMPLETELY RESET YOUR PROFILE|r\n\n back to the original defaults. \n\nI know this may significantly inconvenience many of you, but after much deliberation, the profile reset is the only way to properly prepare your profile for Legion.\n\n|cffFFFF00We will need to |r|cff798BDDReload Your UI|r|cffFFFF00 after we |cff798BDDReset Your Profile|r|cffFFFF00. Press the button below to continue...\n\n|cffaaaaaa(Your saved vars have NOT been reset yet and you may revert to an older version of xCT+ at this time by simply exiting the game, but that is not recommended)|r",
-	timeout			= 0,
-	whileDead		= 1,
+	text           =
+	"|cffD7DF23xCT+ Legion Clean Up|r\n\nHello Again,\n\n I am sorry to inform you that |cffFFFF00xCT|r|cffFF0000+|r needs to\n\n|cffFF0000COMPLETELY RESET YOUR PROFILE|r\n\n back to the original defaults. \n\nI know this may significantly inconvenience many of you, but after much deliberation, the profile reset is the only way to properly prepare your profile for Legion.\n\n|cffFFFF00We will need to |r|cff798BDDReload Your UI|r|cffFFFF00 after we |cff798BDDReset Your Profile|r|cffFFFF00. Press the button below to continue...\n\n|cffaaaaaa(Your saved vars have NOT been reset yet and you may revert to an older version of xCT+ at this time by simply exiting the game, but that is not recommended)|r",
+	timeout        = 0,
+	whileDead      = 1,
 
-	button1			= "Exit WoW",
-	button2			= "Reset Profile and Reload UI",
+	button1        = "Exit WoW",
+	button2        = "Reset Profile and Reload UI",
 
-	OnAccept		= Quit,
-	OnCancel		= function () print("Resetting UI"); x.CleanUpForLegion() end,
+	OnAccept       = Quit,
+	OnCancel       = function()
+		print("Resetting UI"); x.CleanUpForLegion()
+	end,
 
 	-- Taint work around
-	preferredIndex	= 3,
+	preferredIndex = 3,
 }
