@@ -1749,7 +1749,7 @@ local ACR = LibStub('AceConfigRegistry-3.0')
 ACD:SetDefaultSize(AddonName, 803, 560)
 AC:RegisterOptionsTable(AddonName, addon.options)
 
--- -- Register addon to the new compartment frame see https://wowpedia.fandom.com/wiki/Addon_compartment
+-- Register addon to the new compartment frame see https://wowpedia.fandom.com/wiki/Addon_compartment
 -- AddonCompartmentFrame:RegisterAddon({
 --   text = AddonName,
 --   registerForAnyClick = true,

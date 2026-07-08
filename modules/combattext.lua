@@ -21,20 +21,11 @@ local x = addon.engine
 local _, _G, sformat, mfloor, mabs, ssub, smatch, sgsub, s_upper, s_lower, string, tinsert, tremove, ipairs, pairs, print, tostring, tonumber, select, unpack =
   nil, _G, string.format, math.floor, math.abs, string.sub, string.match, string.gsub, string.upper, string.lower, string, table.insert, table.remove, ipairs, pairs, print, tostring, tonumber, select, unpack
 
---UTF8 Functions
-local utf8 = {
-  len = string.utf8len,
-  sub = string.utf8sub,
-  reverse = string.utf8reverse,
-  upper = string.utf8upper,
-  lower = string.utf8lower
-}
-
 local xCP = LibStub and LibStub("xCombatParser-1.0", true)
 if not xCP then print("Something went wrong when xCT+ tried to load. Please reinstall and inform the author.") end
 
-local L_AUTOATTACK = C_Spell.GetSpellName(6603)
-local L_KILLCOMMAND =  C_Spell.GetSpellName(34026)
+local L_AUTOATTACK = GetSpellInfo(6603)
+local L_KILLCOMMAND = GetSpellInfo(34026)
 
 --[=====================================================[
  Holds cached spells, buffs, and debuffs
@@ -77,19 +68,7 @@ x.POWER_LOOKUP = {
 	[4] = "COMBO_POINTS",
 	[5] = "RUNES",
 	[6] = "RUNIC_POWER",
-	[7] = "SOUL_SHARDS",
-	[8] = "LUNAR_POWER",
-	[9] = "HOLY_POWER",
-	[10] = "ALTERNATE_POWER_INDEX",
-	[11] = "MAELSTROM",
-	[12] = "CHI",
-	[13] = "INSANITY",
-	[14] = "BURNING_EMBERS",
-	[15] = "DEMONIC_FURY",
-	[16] = "ARCANE_CHARGES",
-	[17] = "FURY",
-	[18] = "PAIN",
-	[25] = "VIGOR",
+	[7] = "SOUL_SHARDS"
 }
 
 
@@ -114,11 +93,7 @@ function x:UpdatePlayer()
   if x.player.unit == "custom" then
     --CombatTextSetActiveUnit(x.player.customUnit)
   else
-    --if UnitHasVehicleUI("player") then
-    --  x.player.unit = "vehicle"
-    --else
-      x.player.unit = "player"
-    --end
+    x.player.unit = "player"
     CombatTextSetActiveUnit(x.player.unit)
   end
 
@@ -126,9 +101,6 @@ function x:UpdatePlayer()
   x.player.name   = UnitName("player")
   x.player.class  = select(2, UnitClass("player"))
   x.player.guid   = UnitGUID("player")
-
-  --local activeTalentGroup = GetActiveSpecGroup(false, false)
-  --x.player.spec = GetSpecialization(false, false, activeTalentGroup)
 end
 
 --[=====================================================[
@@ -153,28 +125,18 @@ function x:UpdateCombatTextEvents(enable)
     f:RegisterEvent("UNIT_POWER_UPDATE")
     f:RegisterEvent("PLAYER_REGEN_DISABLED")
     f:RegisterEvent("PLAYER_REGEN_ENABLED")
-    f:RegisterEvent("UNIT_ENTERED_VEHICLE")
-    f:RegisterEvent("UNIT_EXITING_VEHICLE")
     f:RegisterEvent("PLAYER_ENTERING_WORLD")
     f:RegisterEvent("UNIT_PET")
     f:RegisterEvent("PLAYER_TARGET_CHANGED")
     f:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
-
-    ---- if runes
-    --f:RegisterEvent("RUNE_POWER_UPDATE")
 
     -- if loot
     f:RegisterEvent("CHAT_MSG_LOOT")
     f:RegisterEvent("CHAT_MSG_CURRENCY")
     f:RegisterEvent("CHAT_MSG_MONEY")
 
-    -- damage and healing
-    --f:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-
     -- Class combo points
     f:RegisterEvent("UNIT_AURA")
-    --f:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-    --f:RegisterEvent("UNIT_COMBO_POINTS")
     f:RegisterEvent("PLAYER_TARGET_CHANGED")
 
     x.combatEvents = f
@@ -254,8 +216,8 @@ local function IsOverhealingSubtracted() return x.db.profile.frames["outgoing"].
 local function FormatOutgoingOverhealing(amount) return x.db.profile.frames["outgoing"].overhealingPrefix .. amount .. x.db.profile.frames["outgoing"].overhealingPostfix end
 
 -- TODO: Add Combo Point Support
-local function ShowRogueComboPoints() return false end -- x.db.profile.spells.combo["ROGUE"][COMBAT_TEXT_SHOW_COMBO_POINTS_TEXT] and x.player.class == "ROGUE" end
-local function ShowFeralComboPoints() return false end -- x.db.profile.spells.combo["DRUID"][2][COMBAT_TEXT_SHOW_COMBO_POINTS_TEXT] and x.player.class == "DRUID" and x.player.spec == 2 end
+local function ShowRogueComboPoints() return x.db.profile.spells.combo["ROGUE"] and x.db.profile.spells.combo["ROGUE"][COMBAT_TEXT_SHOW_COMBO_POINTS_TEXT] and x.player.class == "ROGUE" end
+local function ShowFeralComboPoints() return x.db.profile.spells.combo["DRUID"] and x.db.profile.spells.combo["DRUID"][2] and x.db.profile.spells.combo["DRUID"][2][COMBAT_TEXT_SHOW_COMBO_POINTS_TEXT] and x.player.class == "DRUID" and x.player.spec == 2 end
 local function ShowMonkChi() return false end -- return x.db.profile.spells.combo["MONK"][CHI] and x.player.class == "MONK" end
 local function ShowPaladinHolyPower() return false end -- return x.db.profile.spells.combo["PALADIN"][HOLY_POWER] and x.player.class == "PALADIN" end
 local function ShowPriestShadowOrbs() return false end -- return x.db.profile.spells.combo["PRIEST"][3][SHADOW_ORBS] and x.player.class == "PRIEST" and x.player.spec == 3 end
@@ -512,9 +474,9 @@ if unsupportedLocales[GetLocale()] then
   XCT_KILLED = ACTION_PARTY_KILL
   XCT_DISPELLED = ACTION_SPELL_DISPEL
 else
-  XCT_STOLE = utf8.upper(utf8.sub(ACTION_SPELL_STOLEN, 1, 1))..utf8.sub(ACTION_SPELL_STOLEN, 2)
-  XCT_KILLED = utf8.upper(utf8.sub(ACTION_PARTY_KILL, 1, 1))..utf8.sub(ACTION_PARTY_KILL, 2)
-  XCT_DISPELLED = utf8.upper(utf8.sub(ACTION_SPELL_DISPEL, 1, 1))..utf8.sub(ACTION_SPELL_DISPEL, 2)
+  XCT_STOLE = s_upper(ssub(ACTION_SPELL_STOLEN, 1, 1))..ssub(ACTION_SPELL_STOLEN, 2)
+  XCT_KILLED = s_upper(ssub(ACTION_PARTY_KILL, 1, 1))..ssub(ACTION_PARTY_KILL, 2)
+  XCT_DISPELLED = s_upper(ssub(ACTION_SPELL_DISPEL, 1, 1))..ssub(ACTION_SPELL_DISPEL, 2)
 end
 
 --[=====================================================[
@@ -1108,19 +1070,16 @@ end
 
 -- Format Handlers for name
 local CLASS_LOOKUP = {
-	[1]    = "DEATHKNIGHT",
-	[2]    = "DEMONHUNTER",
-	[4]    = "DRUID",
-	[8]    = "EVOKER",
-	[16]   = "HUNTER",
-	[32]   = "MAGE",
-	[64]   = "MONK",
-	[128]  = "PALADIN",
-	[256]  = "PRIEST",
-	[512]  = "ROGUE",
-	[1024] = "SHAMAN",
-	[2048] = "WARLOCK",
-	[4096] = "WARRIOR"
+	[1]    = "WARRIOR",
+	[2]    = "PALADIN",
+	[3]    = "HUNTER",
+	[4]    = "ROGUE",
+	[5]    = "PRIEST",
+	[6]    = "DEATHKNIGHT",
+	[7]    = "SHAMAN",
+	[8]    = "MAGE",
+	[9]    = "WARLOCK",
+	[11]   = "DRUID"
 }
 
 local formatNameTypes
@@ -1831,9 +1790,9 @@ local CombatEventHandlers = {
 
 	["SpellEnergize"] = function (args)
 		local amount, energy_type = args.amount, x.POWER_LOOKUP[args.powerType]
-		if not energy_type then 
-		    print('xct: unknown SpellEnergize power type: ' .. args.powerType) 
-		    return 
+		if not energy_type then
+		    -- print('xct: unknown SpellEnergize power type: ' .. args.powerType)
+		    return
 		end
 		if not ShowEnergyGains() then return end
 		if FilterPlayerPower(mabs(tonumber(amount))) then return end
@@ -1869,47 +1828,13 @@ local BuffsOrDebuffs = {
 -- List from: http://www.tukui.org/addons/index.php?act=view&id=236
 local AbsorbList = {
 	-- All
-	[187805] = true, -- Etheralus (WoD Legendary Ring)
-	[173260] = true, -- Shield Tronic (Like a health potion from WoD)
 	[64413]  = true, -- Val'anyr, Hammer of Ancient Kings (WotLK Legendary Mace)
 	[82626]  = true, -- Grounded Plasma Shield (Engineer's Belt Enchant)
-	[207472] = true, -- Prydaz, Xavaric's Magnum Opus (Legendary Neck)
-
-	-- Coming Soon (Delicious Cake!) Trinket
-	--[231290] = true, -- TODO: Figure out which one is correct
-	[225723] = true, -- Both are Delicious Cake! from item:140793
-
-	-- Coming Soon (Royal Dagger Haft, item:140791)
-	-- Sooooo I dont think this one is going to be trackable... we will see when i can get some logs!
-	--[225720] = true, -- TODO: Figure out which is the real one
-	--[229457] = true, -- Sands of Time (From the Royal Dagger Haft tinket) (Its probably this one)
-	--[229333] = true, -- Sands of Time (From the Royal Dagger Haft tinket)
-	--[225124] = true, -- Sands of Time (From the Royal Dagger Haft tinket)
-
-	-- Coming Soon -- Animated Exoskeleton (Trinket, Item: 140789)
-	[225033] = true, -- Living Carapace (Needs to be verified)
-
-	-- Coming Soon -- Infernal Contract (Trinket, Item: 140807)
-	[225140] = true, -- Infernal Contract (Needs to be verified)
-
-
-
-	-- Legion Trinkets
-	[221878] = true, -- Buff: Spirit Fragment        - Trinket[138222]: Vial of Nightmare Fog
-	[215248] = true, -- Buff: Shroud of the Naglfar  - Trinket[133645]: Naglfar Fare
-	[214366] = true, -- Buff: Crystalline Body       - Trinket[137338]: Shard of Rokmora
-	[214423] = true, -- Buff: Stance of the Mountain - Trinket[137344]: Talisman of the Cragshaper
-	[214971] = true, -- Buff: Gaseous Bubble         - Trinket[137369]: Giant Ornamental Pearl
-	[222479] = true, -- Buff: Shadowy Reflection     - Trinket[138225]: Phantasmal Echo
 
 	-- Death Knight
 	[48707] = true,  -- Anti-Magic Shield
 	[77535] = true,  -- Blood Shield
 	[116888] = true, -- Purgatory
-	[219809] = true, -- Tombstone
-
-	-- Demon Hunter
-	[227225] = true, -- Soul Barrier
 
 	-- Mage
 	[11426] = true,  -- Ice Barrier

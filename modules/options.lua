@@ -37,7 +37,7 @@ end
 -- Creating an Config
 addon.options = {
   -- Add a place for the user to grab
-  name = "                                                      " .. "Version: "..(C_AddOns.GetAddOnMetadata("xCT+", "Version") or "Unknown") .. "                                                      ",
+  name = "                                                      " .. "Version: "..(GetAddOnMetadata("xCT+", "Version") or "Unknown") .. "                                                      ",
   handler = x,
   type = 'group',
   args = {
@@ -1515,7 +1515,7 @@ addon.options.args["Credits"] = {
     },
 
 
-    
+
 
     testerTitleSpace5 = {
       type = 'description',
